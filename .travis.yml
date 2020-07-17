@@ -1,0 +1,43 @@
+language: ruby
+rvm:
+- 2.7
+before_install:
+- gem update --system
+- gem install bundler
+install:
+- rake run_bundler
+script:
+- rake test
+deploy:
+- provider: lambda
+  function_name: SierraHoldingsUpdatePoller-dev
+  description: A serice for polling the Sierra API for updates from the Holdings endpoint
+  region: us-east-1
+  role: arn:aws:iam::224280085904:role/lambda_basic_execution
+  runtime: ruby2.5
+  timeout: 60
+  module_name: app
+  handler_name: handle_event
+  environment_variables:
+    - LOG_LEVEL=debug
+    - AWS_REGION=us-east-1
+    - NYPL_CORE_S3_BASE_URL=https://s3.amazonaws.com
+    - PLATFORM_API_BASE_URL=https://dev-platform.nypl/org/api/v0.1
+    - BUCKET_NAME=sierra-poller-state-dev
+    - SIERRA_API_BASE_URL=https://nypl-sierra-test.nypl.org:443/iii/sierra-api
+    - SIERRA_VERSION=v6
+    - SIERRA_OAUTH_URL=https://nypl-sierra-test.nypl.org:443/iii/sierra-api/v3/token
+    - SIERRA_OAUTH_ID=AQICAHg44Tmwi+nLR/0IeFODcEqu2nSlqdDZMsDWalEb1O+LSQEPfTm0ZNPHAtRD1am3KPF8AAAAejB4BgkqhkiG9w0BBwagazBpAgEAMGQGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMCSeDlLbDCkrUw5HgAgEQgDe3aLUovzs4zQKOR/+UQXEOWF98UvjAvPijVSi2WlVme+6gvCDAj/Eicp26/VsAbxc2OhdMazUZ
+    - SIERRA_OAUTH_SECRET=AQICAHg44Tmwi+nLR/0IeFODcEqu2nSlqdDZMsDWalEb1O+LSQGkTFrDp4UWdX4YCT2TX8iyAAAAcjBwBgkqhkiG9w0BBwagYzBhAgEAMFwGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMT5TuObnrfHCIbSk8AgEQgC8k9u2afElzRHRs+pPxjPsRGjPIrWQBD9VUssj3rE1IlRz4kF3FM8jc/GAyFKFsMA==
+  access_key_id: "$AWS_ACCESS_KEY_ID_DEV"
+  secret_access_key: "$AWS_SECRET_ACCESS_KEY_DEV"
+  on:
+    branch: development
+notifications:
+  email:
+    on_failure: always
+env:
+  global:
+  - AWS_DEFAULT_REGION=us-east-1
+  - secure: jIqIRly6OLwjiDh2sltSj8Q/AxJUQKvUUmDkWgVuKl/wLFOKW3lQnoN2ehoW2mVpdKxUtc1qXSi3heNLyf3kknqR1IXsjar7fu8ujl/tIPP1G1ksnDgaEn7VdpT4Px4x8sYz53fRT+xiHHzJX5m3mSoD1Chd4Vhxb2P/IV2HVHq9cKzRwFrS7eB+wPNxge00Gu/vBr9+vzEIOcSWvxGtrq6E+h1mOitiAimJg8ocOaI7UespiWI+EWlrkUA8HXLZDVeF8xt8ClptUA9IQQhqQ/HKS0uk/yoKJtOd1poDcXHp9jAnsSxGkgxRz8wH1YZyW8oTdcuaCSrh7Mcx207b5vMu1FaSqCyanriZ+rpbsdN3DdKk5B0Vnv2/e6tg5JhjQVmdvKF10Gp2DOtPJB/Mo2ljPMOXZZ8NpNf13c5bT/fQhe8zhJiA+HebbWXGSzdIh5RwH+k2sFq/nh3zH96j3iralip0l7oQxsS/RUOSlGqkS0ILVJFMcpus8KHOessyKxPnv2Kj9GASZyu9RIeS1gY0/pOAoQ4cd0QLrzTTqTVDhLSDOlLdSVU4I2jbdb+Co2SWxH9j40Q3Dx9tYFxdLh6dbukZjryvKswGz664OKKlC1orHXh0V5yDAvS9CwHK+TFFo6rc7rAGZv/4MjG2LJkipoJ6isLJtOK2HftizQU=
+  - secure: Vei5nlrN5AxBbkxCRAYBP3Wu4e8LDX9hyxcPBem2pPlybqcNDXNj2pCBaad9mmzolSjb3gt65jYOs2AJ0meQ2w6f4Qhi0N5R/YTfoNQXRoLAB4DBPQ3TY7FqnFVz/fWeF7xc9rA55ZNv+tV9EtHQUGiIMj/JHbDSaDsyjavritxVeXAMjoJ6Mi2qGbCnbbsWl8P44utmeQSG+9Xgxv8jBh3tXL1jB5lM/XxesseAFnuSYV6Uxg49xtJY2swKcJ4pStM4NXXAMRQ7tDqIt3hjCVfFtbcquL8rT2bJo4UvfLv7dndBfuUqeJcn52KqEpq4h87yRrkAqXviWVWcOri1HPIdEeUXbjuWvDhIkUBpe0D0DifVYSVUaTS5ui31Gkr6Iv2s96kwGC3B5HZQYI2pOQnhE1X8LGzzGPnQ5uS5tFZZCb/vKQNpigXvbGBpUj8VeB9tI2Lt7aB/iX7afCEfDVfQO0Q/ibKzr3mRPvj+vN8cr6cqnVsZUP67Pzj/CKLI+PA6v0p7lHzxRIsSCwaSn3Ef8h41bhG9WlinzfardCLBW5Chx8lF2nKZIrrX2WdBDOVwTkphI9rzLfWYa9hjkIi6x54YEUez7t4A64YbKVXDXt0Xbu24k3z23v63WZj1jsIST/Z3kYav3lGUNNc/un37p8bfIMbYk0VvwFI5iHQ=
