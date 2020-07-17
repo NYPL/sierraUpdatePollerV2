@@ -7,7 +7,8 @@ require_relative 'sierra_record'
 
 # Manager for handling retrieval of records from the Sierra API
 class SierraManager
-    attr_reader :records_processed
+    attr_reader :processing, :records_processed, :current_time, :sierra_client, :state
+    attr_writer :processing, :records_processed
 
     @@request_batch_size = 50
 
@@ -40,7 +41,7 @@ class SierraManager
     def validate_processing
         $logger.info "Processed #{@records_processed[:success]} successfully and #{@records_processed[:error]} with errors"
         total_processed = @records_processed[:success] + @records_processed[:error]
-        if @records_processed[:error] / total_processed >= 0.01
+        if @records_processed[:error] / total_processed.to_f >= 0.01
             $logger.error "Received too many errors as percentage of records processed", @records_processed
             raise SierraError.new("Records processing errors exceeded 1% threshold!")
         end
@@ -96,6 +97,7 @@ class SierraManager
         sierra_batch.encode_and_send_to_kinesis
 
         # Update counts of total records processed
+        self._update_processing_counts sierra_batch.process_statuses
         
         # If we received fewer records than the maximum per batch this is the last batch
         # and we should set the state to start from this point and exit this invocation
@@ -104,7 +106,7 @@ class SierraManager
             @state.set_current_state(@current_time, 0)
             @processing = false
         else
-            @state.set_current_state(@state.start_time, sierra_batch.offset + @@request_batch_size)
+            @state.set_current_state(@state.start_time, @state.start_offset + @@request_batch_size)
         end
     end
 

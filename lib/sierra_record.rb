@@ -1,6 +1,6 @@
 
 class SierraBatch
-    attr_reader :size, :offset, :records
+    attr_reader :size, :offset, :records, :process_statuses
 
     def initialize record_response
         @size = record_response.body['total']
@@ -14,9 +14,9 @@ class SierraBatch
             sierra_record = SierraRecord.new record
             begin
                 sierra_record.encode
-                $logger.info "Encoded record ##{record['id']}"
+                $logger.info "Encoded record id# #{record['id']}"
             rescue AvroError => e
-                $logger.warning "Record (id# #{record['id']} failed avro validation", { :status => e.message }
+                $logger.warn "Record (id# #{record['id']} failed avro validation", { :status => e.message }
                 @process_statuses[:error] += 1
                 next
             end
@@ -24,8 +24,8 @@ class SierraBatch
             begin
                 sierra_record.send_to_kinesis
                 $logger.info "Sent record to kinesis stream record ##{record['id']}"
-            rescue Exception => e
-                $logger.warning "Record (id# #{record['id']} failed to write to kinesis", { :status => e.message }
+            rescue NYPLError => e
+                $logger.warn "Record (id# #{record['id']} failed to write to kinesis", { :status => e.message }
                 @process_statuses[:error] += 1
                 next
             end
@@ -36,7 +36,7 @@ class SierraBatch
     end
 
     class SierraRecord
-        attr_reader :record, :decoded_record
+        attr_reader :record, :encoded_record
         def initialize record
             @record = record
             @encoded_record = nil

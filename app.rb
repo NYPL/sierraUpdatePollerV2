@@ -19,7 +19,6 @@ def handle_event(event:, context:)
     # Fetch current state from S3
     $logger.info "Loading State from s3"
     state = StateManager.new
-    state.set_current_state('2020-07-01T00:00:00', 0)
     state.fetch_current_state
     
     # Load records given current starting position in state
