@@ -2,7 +2,6 @@ GIT
   remote: https://github.com/NYPL/NYPLRubyUtil.git
   revision: 5431dbd19e3a42d96e203a3022b7050d4563dd0c
   ref: 5431dbd
-  branch: SCC-2159-avro-improvements
   specs:
     nypl_ruby_util (0.0.0)
 
