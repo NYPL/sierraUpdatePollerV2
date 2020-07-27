@@ -31,7 +31,7 @@ deploy:
     - SIERRA_OAUTH_SECRET=AQICAHg44Tmwi+nLR/0IeFODcEqu2nSlqdDZMsDWalEb1O+LSQGkTFrDp4UWdX4YCT2TX8iyAAAAcjBwBgkqhkiG9w0BBwagYzBhAgEAMFwGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMT5TuObnrfHCIbSk8AgEQgC8k9u2afElzRHRs+pPxjPsRGjPIrWQBD9VUssj3rE1IlRz4kF3FM8jc/GAyFKFsMA==
     - RECORD_TYPE=holdings
     - RECORD_FIELDS=id,bibIds,bibIdLinks,itemIds,itemIdLinks,inheritLocation,allocationRule,accountingUnit,labelCode,serialCode1,serialCode2,serialCode3,serialCode4,claimOnDate,receivingLocationCode,vendorCode,updateCount,pieceCount,eCheckInCode,mediaTypeCode,updatedDate,createdDate,deletedDate,deleted,suppressed,fixedFields,varFields
-    - KINESIS_STREAM=SierraHolding
+    - KINESIS_STREAM=SierraHoldingsParser-dev
   access_key_id: "$AWS_ACCESS_KEY_ID_DEV"
   secret_access_key: "$AWS_SECRET_ACCESS_KEY_DEV"
   on:
