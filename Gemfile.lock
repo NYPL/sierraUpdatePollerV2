@@ -1,7 +1,8 @@
 GIT
   remote: https://github.com/NYPL/NYPLRubyUtil.git
-  revision: 2aa8e78e9b30b8f84da5fc8345e90c7600b63b27
-  ref: 2aa8e78
+  revision: 5431dbd19e3a42d96e203a3022b7050d4563dd0c
+  ref: 5431dbd
+  branch: SCC-2159-avro-improvements
   specs:
     nypl_ruby_util (0.0.0)
 
@@ -17,6 +18,9 @@ GEM
       aws-partitions (~> 1, >= 1.239.0)
       aws-sigv4 (~> 1.1)
       jmespath (~> 1.0)
+    aws-sdk-kinesis (1.26.0)
+      aws-sdk-core (~> 3, >= 3.99.0)
+      aws-sigv4 (~> 1.1)
     aws-sdk-kms (1.36.0)
       aws-sdk-core (~> 3, >= 3.99.0)
       aws-sigv4 (~> 1.1)
@@ -51,6 +55,7 @@ PLATFORMS
 
 DEPENDENCIES
   avro
+  aws-sdk-kinesis
   aws-sdk-kms
   aws-sdk-s3
   mocha

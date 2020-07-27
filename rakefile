@@ -12,5 +12,5 @@ end
 
 desc "Run bundler for local development and deployment"
 task :run_bundler do
-    sh %{ bundle install --no-deployment; bundle install }
+    sh %{ bundle config unset deployment; bundle install; bundle config set deployment 'true'; bundle install }
 end
