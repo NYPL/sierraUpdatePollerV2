@@ -1,5 +1,4 @@
 require 'date'
-require 'bundler/setup'
 require 'nypl_ruby_util'
 require 'uri'
 
