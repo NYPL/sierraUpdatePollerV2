@@ -18,6 +18,7 @@ This function polls the Sierra API for updates to the Bib, Holding and Item tabl
 
 - RECORD_TYPE: Type of records to poll, should be one of: `holdings`, `bibs`, or `items`
 - RECORD_FIELDS: Comma delimited list of fields to retrieve for the record type
+- SCHEMA_TYPE: The name of the Avro schema that records will be encoded with
 - KINESIS_STREAM: Destination stream for the retrieved records
 - LOG_LEVEL: Standard logging level. Defaults to INFO
 - AWS_REGION: Necessary for connecting to S3
