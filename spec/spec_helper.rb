@@ -15,6 +15,7 @@
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 
 ENV['RECORD_TYPE'] = 'testings'
+ENV['SCHEMA_TYPE'] = 'SierraTest'
 ENV['LOG_LEVEL'] = 'UNKNOWN'
 ENV['KINESIS_STREAM'] = 'test_stream'
 ENV['NYPL_CORE_S3_BASE_URL'] = 'http://test.com'
