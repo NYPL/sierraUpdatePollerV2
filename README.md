@@ -9,7 +9,7 @@ This function polls the Sierra API for updates to the Bib, Holding and Item tabl
 
 ## Dependencies
 
-- nypl_ruby_util (under development, no releases yet)
+- nypl_ruby_util@0.0.2
 - aws-sdk-s3@1.74.0
 - rspec@3.9.0
 - mocha@1.11.2

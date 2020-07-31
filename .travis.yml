@@ -29,8 +29,9 @@ deploy:
   - SIERRA_OAUTH_URL=https://nypl-sierra-test.nypl.org:443/iii/sierra-api/v3/token
   - SIERRA_OAUTH_ID=AQICAHg44Tmwi+nLR/0IeFODcEqu2nSlqdDZMsDWalEb1O+LSQEPfTm0ZNPHAtRD1am3KPF8AAAAejB4BgkqhkiG9w0BBwagazBpAgEAMGQGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMCSeDlLbDCkrUw5HgAgEQgDe3aLUovzs4zQKOR/+UQXEOWF98UvjAvPijVSi2WlVme+6gvCDAj/Eicp26/VsAbxc2OhdMazUZ
   - SIERRA_OAUTH_SECRET=AQICAHg44Tmwi+nLR/0IeFODcEqu2nSlqdDZMsDWalEb1O+LSQGkTFrDp4UWdX4YCT2TX8iyAAAAcjBwBgkqhkiG9w0BBwagYzBhAgEAMFwGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMT5TuObnrfHCIbSk8AgEQgC8k9u2afElzRHRs+pPxjPsRGjPIrWQBD9VUssj3rE1IlRz4kF3FM8jc/GAyFKFsMA==
-  - RECORD_TYPE=SierraHolding
+  - RECORD_TYPE=holdings
   - RECORD_FIELDS=id,bibIds,bibIdLinks,itemIds,itemIdLinks,inheritLocation,allocationRule,accountingUnit,labelCode,serialCode1,serialCode2,serialCode3,serialCode4,claimOnDate,receivingLocationCode,vendorCode,updateCount,pieceCount,eCheckInCode,mediaTypeCode,updatedDate,createdDate,deletedDate,deleted,suppressed,fixedFields,varFields
+  - SCHEMA_TYPE=SierraHolding
   - KINESIS_STREAM=SierraHoldingParser-dev
   access_key_id: "$AWS_ACCESS_KEY_ID_DEV"
   secret_access_key: "$AWS_SECRET_ACCESS_KEY_DEV"
@@ -56,8 +57,9 @@ deploy:
   - SIERRA_OAUTH_URL=https://nypl-sierra-test.nypl.org:443/iii/sierra-api/v3/token
   - SIERRA_OAUTH_ID=AQECAHh7ea2tyZ6phZgT4B9BDKwguhlFtRC6hgt+7HbmeFsrsgAAAGswaQYJKoZIhvcNAQcGoFwwWgIBADBVBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDAJNGpqeEeETCmeurQIBEIAoz+HbpFuGMH/84X9UVisMtsRCo5lIguWzG6PGCf3Q97JMk6Dvo+AZeQ==
   - SIERRA_OAUTH_SECRET=AQECAHh7ea2tyZ6phZgT4B9BDKwguhlFtRC6hgt+7HbmeFsrsgAAAIcwgYQGCSqGSIb3DQEHBqB3MHUCAQAwcAYJKoZIhvcNAQcBMB4GCWCGSAFlAwQBLjARBAwDTxUAqKkiCrdL90MCARCAQ8vxU5R+MEGRpWFPhktni6yfDNoecmxWlerXkaWk+ZUaPKdUlkTI1kDITaWnwf9VvR4N9XwGgKMLfWgM+sW72715eqc=
-  - RECORD_TYPE=SierraHolding
+  - RECORD_TYPE=holdings
   - RECORD_FIELDS=id,bibIds,bibIdLinks,itemIds,itemIdLinks,inheritLocation,allocationRule,accountingUnit,labelCode,serialCode1,serialCode2,serialCode3,serialCode4,claimOnDate,receivingLocationCode,vendorCode,updateCount,pieceCount,eCheckInCode,mediaTypeCode,updatedDate,createdDate,deletedDate,deleted,suppressed,fixedFields,varFields
+  - SCHEMA_TYPE=SierraHolding
   - KINESIS_STREAM=SierraHoldingParser-qa
   access_key_id: "$AWS_ACCESS_KEY_ID_QA"
   secret_access_key: "$AWS_SECRET_ACCESS_KEY_QA"

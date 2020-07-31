@@ -27,6 +27,7 @@ Resources:
       # TODO Cloudwatch Event trigger here
       Environment:
         Variables:
-          RECORD_TYPE: SierraHolding
+          RECORD_TYPE: holdings
           RECORD_FIELDS: id,bibIds,bibIdLinks,itemIds,itemIdLinks,inheritLocation,allocationRule,accountingUnit,labelCode,serialCode1,serialCode2,serialCode3,serialCode4,claimOnDate,receivingLocationCode,vendorCode,updateCount,pieceCount,eCheckInCode,mediaTypeCode,updatedDate,createdDate,deletedDate,deleted,suppressed,fixedFields,varFields
+          SCHEMA_TYPE: SierraHolding
           KINESIS_STREAM: SierraHoldingParser-dev
