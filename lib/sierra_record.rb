@@ -43,7 +43,7 @@ class SierraBatch
         end
 
         def encode 
-            @encoded_record = $avro_client.encode @record
+            @encoded_record = $avro_client.encode(@record, base64=false)
         end
 
         def send_to_kinesis

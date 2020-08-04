@@ -66,7 +66,7 @@ class StateManager
             resp = @s3.put_object({
                 :body => json_body,
                 :bucket => ENV['BUCKET_NAME'],
-                :key => "#{ENV['RECORD_TYPE']}_poller_status.json",
+                :key => "#{ENV['SCHEMA_TYPE'].downcase}_poller_status.json",
                 :acl => "public-read"
             })
         rescue Exception => e

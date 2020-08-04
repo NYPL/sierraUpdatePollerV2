@@ -67,7 +67,7 @@ describe StateManager do
                 .with({
                     :body => JSON.dump({:last_execution_time => 'current_time', :last_execution_offset => 'current_offset', :record_type => 'test'}),
                     :bucket => 'test_bucket',
-                    :key => 'test_poller_status.json',
+                    :key => 'sierratest_poller_status.json',
                     :acl => 'public-read'
                 })
             
