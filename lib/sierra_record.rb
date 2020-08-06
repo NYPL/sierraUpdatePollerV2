@@ -35,11 +35,10 @@ class SierraBatch
         attr_reader :record, :encoded_record
         def initialize record
             @record = record
-            @encoded_record = nil
         end
 
         def encode_and_send_to_kinesis
-            $kinesis_client << @encoded_record
+            $kinesis_client << @record
         end
     end
 end
