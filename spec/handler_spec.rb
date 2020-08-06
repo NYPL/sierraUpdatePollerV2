@@ -8,8 +8,6 @@ describe 'handler' do
             @kms_mock = mock()
             @kms_mock.stubs(:decrypt)
             NYPLRubyUtil::KmsClient.stubs(:new).returns(@kms_mock)
-            @avro_mock = mock()
-            NYPLRubyUtil::NYPLAvro.stubs(:by_name).returns(@avro_mock)
             @kinesis_mock = mock()
             NYPLRubyUtil::KinesisClient.stubs(:new).returns(@kinesis_mock)
         }
@@ -22,7 +20,6 @@ describe 'handler' do
             init
 
             expect($kms_client).to eq(@kms_mock)
-            expect($avro_client).to eq(@avro_mock)
             expect($kinesis_client).to eq(@kinesis_mock)
         end
      end
