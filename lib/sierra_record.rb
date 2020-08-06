@@ -12,18 +12,14 @@ class SierraBatch
     def encode_and_send_to_kinesis
         @records.each { |record| 
             sierra_record = SierraRecord.new record
+
             begin
-                sierra_record.encode
-                $logger.info "Encoded record id# #{record['id']}"
+                sierra_record.encode_and_send_to_kinesis
+                $logger.info "Sent record to kinesis stream record ##{record['id']}"
             rescue AvroError => e
                 $logger.warn "Record (id# #{record['id']} failed avro validation", { :status => e.message }
                 @process_statuses[:error] += 1
                 next
-            end
-
-            begin
-                sierra_record.send_to_kinesis
-                $logger.info "Sent record to kinesis stream record ##{record['id']}"
             rescue NYPLError => e
                 $logger.warn "Record (id# #{record['id']} failed to write to kinesis", { :status => e.message }
                 @process_statuses[:error] += 1
@@ -42,11 +38,7 @@ class SierraBatch
             @encoded_record = nil
         end
 
-        def encode 
-            @encoded_record = $avro_client.encode(@record, base64=false)
-        end
-
-        def send_to_kinesis
+        def encode_and_send_to_kinesis
             $kinesis_client << @encoded_record
         end
     end

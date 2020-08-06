@@ -15,8 +15,7 @@ describe SierraBatch do
     describe '#encode_and_send_to_kinesis' do
         it 'should process all records successfully and increment status' do
             mock_record = mock()
-            mock_record.stubs(:encode).times(50)
-            mock_record.stubs(:send_to_kinesis).times(50)
+            mock_record.stubs(:encode_and_send_to_kinesis).times(50)
             SierraBatch::SierraRecord.stubs(:new).returns(mock_record).times(50)
 
             @test_batch.encode_and_send_to_kinesis
@@ -27,8 +26,7 @@ describe SierraBatch do
 
         it 'should increment errors if unable to encode records via avro' do
             mock_record = mock()
-            mock_record.stubs(:encode).raises(AvroError).times(50)
-            mock_record.stubs(:send_to_kinesis).never
+            mock_record.stubs(:encode_and_send_to_kinesis).raises(AvroError).times(50)
             SierraBatch::SierraRecord.stubs(:new).returns(mock_record).times(50)
 
             @test_batch.encode_and_send_to_kinesis
@@ -39,8 +37,7 @@ describe SierraBatch do
 
         it 'should increment errors if unable to send records to kinesis stream' do
             mock_record = mock()
-            mock_record.stubs(:encode).times(50)
-            mock_record.stubs(:send_to_kinesis).raises(NYPLError).times(50)
+            mock_record.stubs(:encode_and_send_to_kinesis).raises(NYPLError).times(50)
             SierraBatch::SierraRecord.stubs(:new).returns(mock_record).times(50)
 
             @test_batch.encode_and_send_to_kinesis

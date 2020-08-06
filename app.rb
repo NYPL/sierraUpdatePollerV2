@@ -7,8 +7,11 @@ require_relative 'lib/sierra_manager'
 def init
     $logger = NYPLRubyUtil::NyplLogFormatter.new(STDOUT, level: ENV['LOG_LEVEL'])
     $kms_client = NYPLRubyUtil::KmsClient.new
-    $avro_client = NYPLRubyUtil::NYPLAvro.by_name(ENV['SCHEMA_TYPE'])
-    $kinesis_client = NYPLRubyUtil::KinesisClient.new({ :stream_name => ENV['KINESIS_STREAM'], :partition_key => 'id' })
+    $kinesis_client = NYPLRubyUtil::KinesisClient.new({
+        :schema_string => ENV['SCHEMA_TYPE'],
+        :stream_name => ENV['KINESIS_STREAM'],
+        :partition_key => 'id' }
+    )
 
     $logger.debug "Initialized function"
 end

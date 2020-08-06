@@ -2,7 +2,7 @@
 
 desc "Run test suite"
 task :test do
-    sh %{ rspec }
+    sh %{ rspec -fd }
 end
 
 desc "Run function locally. Accepts the name of the resource from the SAM config to select which function to invoke"
