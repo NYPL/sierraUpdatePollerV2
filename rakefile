@@ -86,7 +86,13 @@ task :cron do
       p 'getting lambda with function name', function_name, 'target_id', target_id
       lambda_resp = lambda_client.get_function(function_name: function_name).configuration
       arn = lambda_resp.function_arn
-      if !lambda_client.get_policy(function_name: function_name).policy.include?("#{function_name}-permission")
+      begin
+        policy_resp = lambda_client.get_policy(function_name: function_name)
+      rescue => e
+        no_policy = (e.class == Aws::Lambda::Errors::ResourceNotFoundException)
+        p 'no policy'
+      end
+      if no_policy || !policy_resp.policy.include?("#{function_name}-permission")
         permission = lambda_client.add_permission({
           function_name: function_name,
           principal: 'events.amazonaws.com',
