@@ -41,7 +41,7 @@ deploy:
   description: A service for polling the Sierra API for updates from the Holdings
     endpoint
   region: us-east-1
-  role: arn:aws:iam::224280085904:role/lambda_basic_execution
+  role: arn:aws:iam::946183545209:role/lambda-full-access
   runtime: ruby2.5
   timeout: 60
   module_name: app
