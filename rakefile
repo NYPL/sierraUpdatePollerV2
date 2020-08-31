@@ -1,4 +1,4 @@
-# Basic utility commands to make working with SAM and AWS Lambda more friendly 
+# Basic utility commands to make working with SAM and AWS Lambda more friendly
 
 desc "Run test suite"
 task :test do
@@ -13,4 +13,90 @@ end
 desc "Run bundler for local development and deployment"
 task :run_bundler do
     sh %{ bundle install --no-deployment; bundle install }
+end
+
+desc "set environment variables, vpc configuration, and cron job"
+task :set_config do
+  require 'aws-sdk-lambda'
+  require 'yaml'
+  travis_branch = ENV["TRAVIS_BRANCH"].upcase
+  p 'TRAVIS_BRANCH: ', travis_branch
+  aws_access_key_id = ENV["AWS_ACCESS_KEY_ID_#{travis_branch}"]
+  aws_secret_access_key = ENV["AWS_SECRET_ACCESS_KEY_#{travis_branch}"]
+  if aws_access_key_id && aws_secret_access_key
+      aws_configuration = {
+        region: 'us-east-1',
+        access_key_id: aws_access_key_id,
+        secret_access_key: aws_secret_access_key
+      }
+  end
+  p 'using configuration: ', aws_configuration
+  if defined? aws_configuration
+    lambda_client = Aws::Lambda::Client.new(aws_configuration)
+    yaml = YAML.safe_load(File.read('.travis.yml'))
+    lambda_config = yaml["deploy"].find {|conf| conf["function_name"].include? travis_branch.downcase}
+    function_name = lambda_config["function_name"]
+    event = lambda_config["event"]
+    vpc_config = lambda_config["vpc"]
+    environment_variables = lambda_config["environment_variables"].map {|str| str.split "="}.to_h
+    updated_lambda_configuration = {
+        function_name: function_name,
+        environment: { variables: environment_variables },
+        vpc_config: vpc_config
+    }
+    p 'update_function_configuration with: ', updated_lambda_configuration
+    update_configuration_resp = lambda_client.update_function_configuration(updated_lambda_configuration)
+    p 'update_configuration_resp: ', update_configuration_resp
+    Rake::Task["cron"].invoke
+  end
+end
+
+
+desc 'Add cron to lambda'
+task :cron do
+  require 'aws-sdk-lambda'
+  require 'aws-sdk-cloudwatchevents'
+  travis_branch = ENV["TRAVIS_BRANCH"].upcase
+  p 'TRAVIS_BRANCH: ', travis_branch
+  aws_access_key_id = ENV["AWS_ACCESS_KEY_ID_#{travis_branch}"]
+  aws_secret_access_key = ENV["AWS_SECRET_ACCESS_KEY_#{travis_branch}"]
+  if aws_access_key_id && aws_secret_access_key
+      configuration = {
+        region: 'us-east-1',
+        access_key_id: aws_access_key_id,
+        secret_access_key: aws_secret_access_key
+      }
+  end
+  p 'Cron using config: ', configuration
+  if defined? configuration
+    events_client = Aws::CloudWatchEvents::Client.new(configuration)
+    lambda_client = Aws::Lambda::Client.new(configuration)
+    deploy = yaml["deploy"].find {|conf| conf["function_name"].include? travis_branch.downcase}
+    function_name = deploy["function_name"]
+    event = deploy["event"].map {|string| string.split("=") }.to_h
+    if function_name && (schedule_expression = event["SCHEDULE_EXPRESSION"])
+      rule_name = "#{function_name}-rule"
+      p 'rule_name: ', rule_name, 'schedule_expression: ', schedule_expression
+      events_client.put_rule(name: rule_name, schedule_expression: schedule_expression)
+    end
+    if function_name
+      target_id = "#{function_name}-lambda"
+      p 'getting lambda with function name', function_name, 'target_id', target_id
+      lambda_resp = lambda_client.get_function(function_name: function_name).configuration
+      arn = lambda_resp.function_arn
+      if !lambda_client.get_policy(function_name: function_name).policy.include?("#{function_name}-permission")
+        permission = lambda_client.add_permission({
+          function_name: function_name,
+          principal: 'events.amazonaws.com',
+          statement_id: "#{function_name}-permission",
+          action: 'lambda:InvokeFunction'
+          })
+          p 'permission: ', permission
+      else
+        p 'lambda already has permission'
+      end
+      p 'putting targets ', 'rule: ', rule_name, 'target_id: ', target_id, "arn: ", arn
+      events_client.put_targets(rule: rule_name, targets: [{id: target_id, arn: arn}])
+    end
+  end
 end
