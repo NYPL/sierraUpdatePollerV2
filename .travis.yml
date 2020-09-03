@@ -83,6 +83,12 @@ deploy:
   handler_name: handle_event
   event:
     SCHEDULE_EXPRESSION: rate(15 minutes)
+  vpc:
+    subnet_ids:
+    - subnet-59bcdd03
+    - subnet-5deecd15
+    security_group_ids:
+    - sg-116eeb60
   environment:
     variables:
       LOG_LEVEL: debug
@@ -103,6 +109,8 @@ deploy:
   secret_access_key: "$AWS_SECRET_ACCESS_KEY_PRODUCTION"
   on:
     branch: main
+after_deploy:
+  - rake set_config
 notifications:
   email:
     on_failure: always
