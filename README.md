@@ -21,7 +21,7 @@ This function polls the Sierra API for updates to the Bib, Holding and Item tabl
 - SCHEMA_TYPE: The name of the Avro schema that records will be encoded with
 - KINESIS_STREAM: Destination stream for the retrieved records
 - LOG_LEVEL: Standard logging level. Defaults to INFO
-- AWS_REGION: Necessary for connecting to S3
+- S3_AWS_REGION: Necessary for connecting to S3
 - NYPL_CORE_S3_BASE_URL: Should always be `https://s3.amazonaws.com`
 - BUCKET_NAME: Name of bucket where state is stored as JSON documents
 - SIERRA_API_BASE_URL: Base URI for the Sierra API

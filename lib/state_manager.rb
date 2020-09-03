@@ -11,11 +11,11 @@ class StateManager
 
     # Create S3 client
     def initialize
-       @s3 = Aws::S3::Client.new(region: ENV['AWS_REGION'])
+       @s3 = Aws::S3::Client.new(region: ENV['S3_AWS_REGION'])
     end
 
     # Load current state from S3 object, sets two attributes
-    # start_time: The start time of the last successful batch fetch 
+    # start_time: The start time of the last successful batch fetch
     # start_offset: The offset for the last successful batch fetch
     def fetch_current_state
         # Fetch JSON object from S3
@@ -27,9 +27,9 @@ class StateManager
             $logger.error "Failed to load state file from S3", { :status => e.message }
             raise S3Error.new("Could not load file from S3")
         end
-        
+
         # Confirm that a valid response was received
-        unless response.code.to_i == 200 
+        unless response.code.to_i == 200
             $logger.error "Unable to load state from S3", { :status => response.body }
             raise S3Error.new("Unable to load state from S3 with error #{response.body}")
         end
@@ -48,7 +48,7 @@ class StateManager
         @start_offset = status_body['last_execution_offset']
         $logger.debug "Fetched state START_TIME: #{@start_time}, START_OFFSET: #{@start_offset}"
     end
-        
+
     # Set new state values for execution time and offset. Invoked upon succesful parsing of a batch
     def set_current_state(execution_time, execution_offset)
         $logger.debug "Setting state from last fetch execution EXECUTION_TIME: #{execution_time}, EXECUTION_OFFSET: #{execution_offset}"
@@ -70,7 +70,7 @@ class StateManager
                 :acl => "public-read"
             })
         rescue Exception => e
-            $logger.error "Unable to store current state record in S3", { :status => e.message } 
+            $logger.error "Unable to store current state record in S3", { :status => e.message }
             raise S3Error.new("Failed to store most recent state record in S3")
         end
 
