@@ -81,7 +81,7 @@ class RakeHelper
     @event = lambda_config["event"]
     if event["event_source_arn"]
       add_event_source
-    elsif event["SCHEDULE_EXPRESSION"]
+    elsif event["schedule_expression"]
       add_cron
     end
   end
