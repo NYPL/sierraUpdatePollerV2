@@ -10,7 +10,7 @@ Globals:
     Environment:
       Variables:
         LOG_LEVEL: debug
-        AWS_REGION: us-east-1
+        S3_AWS_REGION: us-east-1
         NYPL_CORE_S3_BASE_URL: https://s3.amazonaws.com
         PLATFORM_API_BASE_URL: https://dev-platform.nypl.org/api/v0.1/
         BUCKET_NAME: sierra-poller-state-dev

@@ -4,6 +4,8 @@ rvm:
 before_install:
 - gem update --system
 - gem install bundler
+- gem install aws-sdk-lambda
+- gem install aws-sdk-cloudwatchevents
 install:
 - rake run_bundler
 script:
@@ -11,67 +13,101 @@ script:
 deploy:
 - provider: lambda
   function_name: SierraHoldingUpdatePoller-dev
-  description: A serice for polling the Sierra API for updates from the Holdings endpoint
+  description: A service for polling the Sierra API for updates from the Holdings
+    endpoint
   region: us-east-1
   role: arn:aws:iam::224280085904:role/lambda_basic_execution
   runtime: ruby2.7
   timeout: 60
   module_name: app
   handler_name: handle_event
-  environment_variables:
-  - LOG_LEVEL=debug
-  - AWS_REGION=us-east-1
-  - NYPL_CORE_S3_BASE_URL=https://s3.amazonaws.com
-  - PLATFORM_API_BASE_URL=https://dev-platform.nypl.org/api/v0.1
-  - BUCKET_NAME=sierra-poller-state-dev
-  - SIERRA_API_BASE_URL=https://nypl-sierra-test.nypl.org:443/iii/sierra-api
-  - SIERRA_VERSION=v6
-  - SIERRA_OAUTH_URL=https://nypl-sierra-test.nypl.org:443/iii/sierra-api/v3/token
-  - SIERRA_OAUTH_ID=AQICAHg44Tmwi+nLR/0IeFODcEqu2nSlqdDZMsDWalEb1O+LSQEPfTm0ZNPHAtRD1am3KPF8AAAAejB4BgkqhkiG9w0BBwagazBpAgEAMGQGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMCSeDlLbDCkrUw5HgAgEQgDe3aLUovzs4zQKOR/+UQXEOWF98UvjAvPijVSi2WlVme+6gvCDAj/Eicp26/VsAbxc2OhdMazUZ
-  - SIERRA_OAUTH_SECRET=AQICAHg44Tmwi+nLR/0IeFODcEqu2nSlqdDZMsDWalEb1O+LSQGkTFrDp4UWdX4YCT2TX8iyAAAAcjBwBgkqhkiG9w0BBwagYzBhAgEAMFwGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMT5TuObnrfHCIbSk8AgEQgC8k9u2afElzRHRs+pPxjPsRGjPIrWQBD9VUssj3rE1IlRz4kF3FM8jc/GAyFKFsMA==
-  - RECORD_TYPE=holdings
-  - RECORD_FIELDS=id,bibIds,bibIdLinks,itemIds,itemIdLinks,inheritLocation,allocationRule,accountingUnit,labelCode,serialCode1,serialCode2,serialCode3,serialCode4,claimOnDate,receivingLocationCode,vendorCode,updateCount,pieceCount,eCheckInCode,mediaTypeCode,updatedDate,createdDate,deletedDate,deleted,suppressed,fixedFields,varFields
-  - SCHEMA_TYPE=SierraHolding
-  - KINESIS_STREAM=SierraHoldingParser-dev
-  access_key_id: "$AWS_ACCESS_KEY_ID_DEV"
-  secret_access_key: "$AWS_SECRET_ACCESS_KEY_DEV"
+  environment:
+    variables:
+      LOG_LEVEL: debug
+      S3_AWS_REGION: us-east-1
+      NYPL_CORE_S3_BASE_URL: https://s3.amazonaws.com
+      PLATFORM_API_BASE_URL: https://dev-platform.nypl.org/api/v0.1
+      BUCKET_NAME: sierra-poller-state-dev
+      SIERRA_API_BASE_URL: https://nypl-sierra-test.nypl.org:443/iii/sierra-api
+      SIERRA_VERSION: v6
+      SIERRA_OAUTH_URL: https://nypl-sierra-test.nypl.org:443/iii/sierra-api/v3/token
+      SIERRA_OAUTH_ID: AQICAHg44Tmwi+nLR/0IeFODcEqu2nSlqdDZMsDWalEb1O+LSQEPfTm0ZNPHAtRD1am3KPF8AAAAejB4BgkqhkiG9w0BBwagazBpAgEAMGQGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMCSeDlLbDCkrUw5HgAgEQgDe3aLUovzs4zQKOR/+UQXEOWF98UvjAvPijVSi2WlVme+6gvCDAj/Eicp26/VsAbxc2OhdMazUZ
+      SIERRA_OAUTH_SECRET: AQICAHg44Tmwi+nLR/0IeFODcEqu2nSlqdDZMsDWalEb1O+LSQGkTFrDp4UWdX4YCT2TX8iyAAAAcjBwBgkqhkiG9w0BBwagYzBhAgEAMFwGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMT5TuObnrfHCIbSk8AgEQgC8k9u2afElzRHRs+pPxjPsRGjPIrWQBD9VUssj3rE1IlRz4kF3FM8jc/GAyFKFsMA==
+      RECORD_TYPE: holdings
+      RECORD_FIELDS: id,bibIds,bibIdLinks,itemIds,itemIdLinks,inheritLocation,allocationRule,accountingUnit,labelCode,serialCode1,serialCode2,serialCode3,serialCode4,claimOnDate,receivingLocationCode,vendorCode,updateCount,pieceCount,eCheckInCode,mediaTypeCode,updatedDate,createdDate,deletedDate,deleted,suppressed,fixedFields,varFields
+      SCHEMA_TYPE: SierraHolding
+      KINESIS_STREAM: SierraHoldingParser-dev
+  access_key_id: "$AWS_ACCESS_KEY_ID_DEVELOPMENT"
+  secret_access_key: "$AWS_SECRET_ACCESS_KEY_DEVELOPMENT"
   on:
     branch: development
 - provider: lambda
   function_name: SierraHoldingUpdatePoller-qa
-  description: A serice for polling the Sierra API for updates from the Holdings endpoint
+  description: A service for polling the Sierra API for updates from the Holdings
+    endpoint
   region: us-east-1
   role: arn:aws:iam::946183545209:role/lambda-full-access
   runtime: ruby2.7
   timeout: 60
   module_name: app
   handler_name: handle_event
-  environment_variables:
-  - LOG_LEVEL=debug
-  - AWS_REGION=us-east-1
-  - NYPL_CORE_S3_BASE_URL=https://s3.amazonaws.com
-  - PLATFORM_API_BASE_URL=https://qa-platform.nypl.org/api/v0.1
-  - BUCKET_NAME=sierra-poller-state-qa
-  - SIERRA_API_BASE_URL=https://nypl-sierra-test.nypl.org:443/iii/sierra-api
-  - SIERRA_VERSION=v6
-  - SIERRA_OAUTH_URL=https://nypl-sierra-test.nypl.org:443/iii/sierra-api/v3/token
-  - SIERRA_OAUTH_ID=AQECAHh7ea2tyZ6phZgT4B9BDKwguhlFtRC6hgt+7HbmeFsrsgAAAHoweAYJKoZIhvcNAQcGoGswaQIBADBkBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDA6yJkJXvJKEQUcsCAIBEIA3oerpjzhASuO2ZGudbLoo3dCqgPJfcRu2fj1x2an58I9ldyKNArEv5rzJFYasX3FOrnMeqHdYAA==
-  - SIERRA_OAUTH_SECRET=AQECAHh7ea2tyZ6phZgT4B9BDKwguhlFtRC6hgt+7HbmeFsrsgAAAHIwcAYJKoZIhvcNAQcGoGMwYQIBADBcBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDLQgrst3U3mqh14f/QIBEIAvR0AVyVvE/sYzsJV2rzFuBslo6xa1nV97F/furZ0V7s7/vZcMQ9gRN1N3B21wDp8=
-  - RECORD_TYPE=holdings
-  - RECORD_FIELDS=id,bibIds,bibIdLinks,itemIds,itemIdLinks,inheritLocation,allocationRule,accountingUnit,labelCode,serialCode1,serialCode2,serialCode3,serialCode4,claimOnDate,receivingLocationCode,vendorCode,updateCount,pieceCount,eCheckInCode,mediaTypeCode,updatedDate,createdDate,deletedDate,deleted,suppressed,fixedFields,varFields
-  - SCHEMA_TYPE=SierraHolding
-  - KINESIS_STREAM=SierraHoldingParser-qa
+  environment:
+    variables:
+      LOG_LEVEL: debug
+      S3_AWS_REGION: us-east-1
+      NYPL_CORE_S3_BASE_URL: https://s3.amazonaws.com
+      PLATFORM_API_BASE_URL: https://qa-platform.nypl.org/api/v0.1
+      BUCKET_NAME: sierra-poller-state-qa
+      SIERRA_API_BASE_URL: https://nypl-sierra-test.nypl.org:443/iii/sierra-api
+      SIERRA_VERSION: v6
+      SIERRA_OAUTH_URL: https://nypl-sierra-test.nypl.org:443/iii/sierra-api/v3/token
+      SIERRA_OAUTH_ID: AQECAHh7ea2tyZ6phZgT4B9BDKwguhlFtRC6hgt+7HbmeFsrsgAAAHoweAYJKoZIhvcNAQcGoGswaQIBADBkBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDA6yJkJXvJKEQUcsCAIBEIA3oerpjzhASuO2ZGudbLoo3dCqgPJfcRu2fj1x2an58I9ldyKNArEv5rzJFYasX3FOrnMeqHdYAA==
+      SIERRA_OAUTH_SECRET: AQECAHh7ea2tyZ6phZgT4B9BDKwguhlFtRC6hgt+7HbmeFsrsgAAAHIwcAYJKoZIhvcNAQcGoGMwYQIBADBcBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDLQgrst3U3mqh14f/QIBEIAvR0AVyVvE/sYzsJV2rzFuBslo6xa1nV97F/furZ0V7s7/vZcMQ9gRN1N3B21wDp8=
+      RECORD_TYPE: holdings
+      RECORD_FIELDS: id,bibIds,bibIdLinks,itemIds,itemIdLinks,inheritLocation,allocationRule,accountingUnit,labelCode,serialCode1,serialCode2,serialCode3,serialCode4,claimOnDate,receivingLocationCode,vendorCode,updateCount,pieceCount,eCheckInCode,mediaTypeCode,updatedDate,createdDate,deletedDate,deleted,suppressed,fixedFields,varFields
+      SCHEMA_TYPE: SierraHolding
+      KINESIS_STREAM: SierraHoldingParser-qa
   access_key_id: "$AWS_ACCESS_KEY_ID_QA"
   secret_access_key: "$AWS_SECRET_ACCESS_KEY_QA"
   on:
     branch: qa
+- provider: lambda
+  function_name: SierraHoldingUpdatePoller-production
+  description: A service for polling the Sierra API for updates from the Holdings
+    endpoint
+  region: us-east-1
+  role: arn:aws:iam::946183545209:role/lambda-full-access
+  runtime: ruby2.7
+  timeout: 60
+  module_name: app
+  handler_name: handle_event
+  event:
+    SCHEDULE_EXPRESSION: rate(15 minutes)
+  environment:
+    variables:
+      LOG_LEVEL: debug
+      S3_AWS_REGION: us-east-1
+      NYPL_CORE_S3_BASE_URL: https://s3.amazonaws.com
+      PLATFORM_API_BASE_URL: https://platform.nypl.org/api/v0.1
+      BUCKET_NAME: sierra-poller-state-production
+      SIERRA_API_BASE_URL: https://nypl-sierra-test.nypl.org:443/iii/sierra-api
+      SIERRA_VERSION: v6
+      SIERRA_OAUTH_URL: https://nypl-sierra-test.nypl.org:443/iii/sierra-api/v3/token
+      SIERRA_OAUTH_ID: AQECAHh7ea2tyZ6phZgT4B9BDKwguhlFtRC6hgt+7HbmeFsrsgAAAHoweAYJKoZIhvcNAQcGoGswaQIBADBkBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDA6yJkJXvJKEQUcsCAIBEIA3oerpjzhASuO2ZGudbLoo3dCqgPJfcRu2fj1x2an58I9ldyKNArEv5rzJFYasX3FOrnMeqHdYAA==
+      SIERRA_OAUTH_SECRET: AQECAHh7ea2tyZ6phZgT4B9BDKwguhlFtRC6hgt+7HbmeFsrsgAAAHIwcAYJKoZIhvcNAQcGoGMwYQIBADBcBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDLQgrst3U3mqh14f/QIBEIAvR0AVyVvE/sYzsJV2rzFuBslo6xa1nV97F/furZ0V7s7/vZcMQ9gRN1N3B21wDp8=
+      RECORD_TYPE: holdings
+      RECORD_FIELDS: id,bibIds,bibIdLinks,itemIds,itemIdLinks,inheritLocation,allocationRule,accountingUnit,labelCode,serialCode1,serialCode2,serialCode3,serialCode4,claimOnDate,receivingLocationCode,vendorCode,updateCount,pieceCount,eCheckInCode,mediaTypeCode,updatedDate,createdDate,deletedDate,deleted,suppressed,fixedFields,varFields
+      SCHEMA_TYPE: SierraHolding
+      KINESIS_STREAM: SierraHoldingParser-production
+  access_key_id: "$AWS_ACCESS_KEY_ID_PRODUCTION"
+  secret_access_key: "$AWS_SECRET_ACCESS_KEY_PRODUCTION"
+  on:
+    branch: main
 notifications:
   email:
     on_failure: always
 env:
   global:
-  - AWS_DEFAULT_REGION=us-east-1
-  - secure: jIqIRly6OLwjiDh2sltSj8Q/AxJUQKvUUmDkWgVuKl/wLFOKW3lQnoN2ehoW2mVpdKxUtc1qXSi3heNLyf3kknqR1IXsjar7fu8ujl/tIPP1G1ksnDgaEn7VdpT4Px4x8sYz53fRT+xiHHzJX5m3mSoD1Chd4Vhxb2P/IV2HVHq9cKzRwFrS7eB+wPNxge00Gu/vBr9+vzEIOcSWvxGtrq6E+h1mOitiAimJg8ocOaI7UespiWI+EWlrkUA8HXLZDVeF8xt8ClptUA9IQQhqQ/HKS0uk/yoKJtOd1poDcXHp9jAnsSxGkgxRz8wH1YZyW8oTdcuaCSrh7Mcx207b5vMu1FaSqCyanriZ+rpbsdN3DdKk5B0Vnv2/e6tg5JhjQVmdvKF10Gp2DOtPJB/Mo2ljPMOXZZ8NpNf13c5bT/fQhe8zhJiA+HebbWXGSzdIh5RwH+k2sFq/nh3zH96j3iralip0l7oQxsS/RUOSlGqkS0ILVJFMcpus8KHOessyKxPnv2Kj9GASZyu9RIeS1gY0/pOAoQ4cd0QLrzTTqTVDhLSDOlLdSVU4I2jbdb+Co2SWxH9j40Q3Dx9tYFxdLh6dbukZjryvKswGz664OKKlC1orHXh0V5yDAvS9CwHK+TFFo6rc7rAGZv/4MjG2LJkipoJ6isLJtOK2HftizQU=
-  - secure: Vei5nlrN5AxBbkxCRAYBP3Wu4e8LDX9hyxcPBem2pPlybqcNDXNj2pCBaad9mmzolSjb3gt65jYOs2AJ0meQ2w6f4Qhi0N5R/YTfoNQXRoLAB4DBPQ3TY7FqnFVz/fWeF7xc9rA55ZNv+tV9EtHQUGiIMj/JHbDSaDsyjavritxVeXAMjoJ6Mi2qGbCnbbsWl8P44utmeQSG+9Xgxv8jBh3tXL1jB5lM/XxesseAFnuSYV6Uxg49xtJY2swKcJ4pStM4NXXAMRQ7tDqIt3hjCVfFtbcquL8rT2bJo4UvfLv7dndBfuUqeJcn52KqEpq4h87yRrkAqXviWVWcOri1HPIdEeUXbjuWvDhIkUBpe0D0DifVYSVUaTS5ui31Gkr6Iv2s96kwGC3B5HZQYI2pOQnhE1X8LGzzGPnQ5uS5tFZZCb/vKQNpigXvbGBpUj8VeB9tI2Lt7aB/iX7afCEfDVfQO0Q/ibKzr3mRPvj+vN8cr6cqnVsZUP67Pzj/CKLI+PA6v0p7lHzxRIsSCwaSn3Ef8h41bhG9WlinzfardCLBW5Chx8lF2nKZIrrX2WdBDOVwTkphI9rzLfWYa9hjkIi6x54YEUez7t4A64YbKVXDXt0Xbu24k3z23v63WZj1jsIST/Z3kYav3lGUNNc/un37p8bfIMbYk0VvwFI5iHQ=
-  - secure: E73dmD6G50JeWvJpUphVA8lAvtjv+jr9mQ2XKPYwy7eQbFC8XJUbRpP9i7zguNMQ9jnEOcL9+j5pjtxhHdvL51h+/LqdBzTtJwrw/FjGTvtAnXEhuqkW0ysBnpRrtwNIKj96JOsCc2YSIioouZF2aPsJSGeCjfGD24bAsku3+xpJRM04mGIWUIId4NL8HrQrEFRX5ZDa8z2bd2FiuIIUJQVLDXPm+EQXNzv5FGxBimbynaC7HxB4AakdgATm8W3fJodu1zN+TXALxsUSoTjl0veNnEaI3c8OeDEPSLrfR3OwLV4Cz/4EdqYJD7INv5m26uQeQgP23wrch4Gxx+txdbyK70npG5FWCaUGFvS+BOj1OuSzECLDIneAAVe24tTNe+N218Ppntc0r+U+2/gu4OBeQI7ZSaAmxlOrlJUQ/qe1RDORQqc0qHADFPNak2lPYdNbfaGHNnZfXeTof56WSpAmfRXi5zxGovi54xBmjjSaR1z+Ewv4hlkmsSu1tqibcCpcJzaVV96uBLt0w9W1NkAaNJ8IvmaryFEZKEgI/yUaqctOcw2XM1fxYeonGRhd21VBD7968ZlR80sVniHJuDdjxEyGbuwUFvvyUCCgA7F8frW2eFN5iTzI+H9QXY3oufJMwBRA06ciT+S72cD8NN8lyCF8EU5U8uGSqS7TbhI=
-  - secure: Dtpsl/NPWmIkDOUDSkgnfE79v3dPCqK5usRQ4oeDIJOuMYhCssAeMbqABXOGr7gnDjNIeYonbcuIiVAXo2HsoWK/RDM4Ew1UnXmDnA0mzL6dD+YJBC9kihT5PLho/YLBvc4tslHMMaRep0nhwgmtVf3NMdfyXv9OhdSD7oKGU1VwqscprSFTI0Lb0yr5Mw7HuJRSPQg4bBtBH99rvGFBlr/sETjI6VpOSdZ5OupeHxuyyiFzQwGp2oNdGD8RGxMLBrMuaQtD1Uk2S6E9Eifr6XEykR03hUbtVbHuiLddOB1W7L8VxVtC6G29qSTvtfRPxzwsSrss+61VKVqia5CmAj49WnJYjbL1iJBLJKJzLnTJNSn7EnYDzLEeU0EUcUERcRJv5YvT+vV689Z1hfriH2dp0dSU4lZNW+I93EiH1fr4fTHrsN1K9df0n4dnGL38ozh5iHPxEfcVVu4zh2Ebt+V+bf8YavboLtxDRhkRhFclKKXcswRLuZaC2hILiZWu36+d6PF9MMrKFe6Eqt42S+UYbDPGfJZAF8E/e3zcCJAutj/lBVTgnmnedshb1hewdO5BdGJ191fvGi9jXuqYCMoE1N3EeE8Y9nMPN57tfDEePBfA8UgKJkgznZD5RXogNCY7XxgkiJSEQ9pidZN0kNEzuSH0fRPG4DWhuAGqBdk=
+  - secure: STHw6LScNfsamAXARJBd8r5Rs+yE8hEePWSL6EmBwxeo/3JJiLNk50iyQGGWWWpiXWFvkgLsYK5qEgl+UCheiWIlDUelTRkjliDCS8Ut3q41d886Q3X7XW2XSqcz/RQKR1hlHt4mPmdyeUZ7VMy997+mkYSGgT36hlFeojLht2ZEDQRuPIyWHEM8uLlgCFlsvpg03MTHhf+ijTTv7Sq1G1jYpnRoikVtsUAE0qsJZg25DjUC49bVvxGGbKDqNyc7AtJtm3KoOdMbBs8IBjf8XJNgThjACwtDbO/sVNXkPpFkDfc9sCH+ihvzXDP95v9+LJR0BLV/S+YkXfMKdG5P6+VbKg1mng+LoL91L4HdT4A4FlVVTSHTSbgBDpY46pAheSpaktXYIHJ5xqhX1sJoIDFOQJKmT4+JqmNvgrnoUqYJGw2z1fM1DZV+inO9HG0K3or7/NCUAUaOTszt62OUkB4izIBbkx2wsN+qHuZMfI1/6F6yQ1cBBg4wgIi+fE7GYK6wxlt6GyyFStXG3lmEtYO1HNFSl377V1GBXESTTATxLGDJTM4wJk6g/bhGetXJUIVEWTfdHgIjuHlZuspCy4a3W3qT4xm2XJ+ShOOSgaaT+YSwyFPmMPZFqdD4Tr3Y0n41aw7lwu/gydsqm6rz3W2VMqEwycF2q2gI0lumC9Y=
+  - secure: GW49G5hKs/0y8OAAyx/e/rUYkH9VBVj+rIad1N/rhx/fcKrZPwiooDhCjTbA0mvSBXkGDiMMqB9HsxkIEr+IX2m4RPXLnQwIulP5XIJIu0OVcED6xrRf6RLaFnlXbvArFxNFec1LOQY0Qg8RS/E0wlzhBN4IKGVbcYDEboB10LAxQ70Iathf5wSV9HRdv0eBkdCZKgPG5KLgddKcLBmTRurdNWW3P4KKV5QhofbrveqM8UNvjWkvrHTAknDB2qWB3DZ/Bpix79Yup9zJP4E2xvHSMJ5AXyLbur7dj3oHS4rFt2z+jQeaLg0yAOsFVQkj/dz9T6V0skwk08KqnysnI652ERYEuYtcrc+SATT3fDDobPPdODjI8zTR6JpCJGTO4NmgpH68Zsqu0OOCi7pWTzTpaGRybpI+OT8uc9O5QtAy15HQ4XrfvAA/iPAU6cMS4BYCAq1VFeTFNcsKIXQqqfAbfzoEG+FE+QG3aXUGxLdyX1dLNxdTW8E6lWRre2SZnWtluwInB72yFZb4DRwRCIXZz2hPwvUf1GgWDPpN4OplhFU1SJZ/V3bcptSqF9h9Tn3IxEmkD17KshbEzKdwD8vHGr0u6xhdbXxEmkaJFdvT30C74Lkwnt0qtDU/21hhHbs6IyoNeuB+l82SXQG3D9vvkJ1z4XMTGdD7bS+DdOs=
+  - secure: aBbfEGrbky8BFDcHWgBg9KC/i07ps6m1u6lDBpEC28qcrDHB+5vqaAPJXVXQwM5k7q+mJlR8dDtDewQksDKfnmt34EbalwN3PQCLT7wulnq7DpZwCXNcm/RLMCR7DSaYPfrDQ6B28We0xvH2N9sNBKc4+MN+3M9ZT1QftRHGKZvGpiQq3nVuWWUgR27dktdnClvoKFk3JccMfT3492MEVdD+YzxAuhnGQxjAHRFXHgu9n72mStSmIZvTYIbUqtQ6ngJIF67lfKxPnZ6aNNTXFn1thq1NN2E+vFHaRTFiCJXg495JKikH3+a7Ovb7E0oL68MZqplajCi6jLmbgo0iPsMqU9XTV2QWo5OuHtqfXC/MnELa8peqwPsop1FPz5EFh6T7tUG740IayKSOpbGAHu/bLqPYQ+o/6yIbLJoA5oInAuiGPpOuaBueCO8f1eYoQt4onTyeb1topS+YBdUs+OStXEazbzTYql6xM6oEUY7nU6iDtRJMpbVROVdINufQl1EBnz98iXSMxXluCpZTgD0Z7a0gDiRxHtg0hWn2h2irg/nGuhX5ZvZ6h5Sdcvj8uFRZHuBH1pKQ/0NT3YSYC28j/yKPi+K5kBxBWITXElvMDRlGSslOlvXNlBS7luAYwJVy8hWBDlw/ybXa8kgdygkXjBspmqQEDdRMvhkDipM=
