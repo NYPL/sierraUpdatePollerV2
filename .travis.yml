@@ -54,7 +54,7 @@ deploy:
   module_name: app
   handler_name: handle_event
   event:
-    SCHEDULE_EXPRESSION: rate(1 hour)
+    schedule_expression: rate(1 hour)
   environment:
     variables:
       LOG_LEVEL: debug
@@ -86,7 +86,7 @@ deploy:
   module_name: app
   handler_name: handle_event
   event:
-    SCHEDULE_EXPRESSION: rate(15 minutes)
+    schedule_expression: rate(15 minutes)
   vpc:
     subnet_ids:
     - subnet-59bcdd03
