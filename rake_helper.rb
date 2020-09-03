@@ -103,7 +103,7 @@ class RakeHelper
   def add_cron
 
     ## create the event
-    events_client = Aws::CloudWatchEvents::Client.new(configuration)
+    events_client = Aws::CloudWatchEvents::Client.new(aws_configuration)
     schedule_expression = event["schedule_expression"]
     rule_name = "#{function_name}-rule"
     p 'rule_name: ', rule_name, 'schedule_expression: ', schedule_expression
