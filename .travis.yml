@@ -87,7 +87,7 @@ deploy:
   handler_name: handle_event
   event:
     schedule_expression: rate(15 minutes)
-  vpc:
+  vpc_config:
     subnet_ids:
     - subnet-59bcdd03
     - subnet-5deecd15
