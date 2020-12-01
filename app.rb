@@ -19,11 +19,17 @@ end
 def handle_event(event:, context:)
     init
 
-    # Fetch current state from S3
-    $logger.info "Loading State from s3"
-    state = StateManager.new
-    state.fetch_current_state
-    
+    # If processing a manual job, create a job-specific state manager:
+    if event['manual_job']
+        $logger.info "Processing manual job: #{event.to_json}"
+        state = create_manual_job_state_manager event
+    else
+        # Fetch current state from S3
+        $logger.info "Loading State from s3"
+        state = StateManager.new
+        state.fetch_current_state
+    end
+
     # Load records given current starting position in state
     $logger.info "Fetching information from Sierra API"
     sierra = SierraManager.new(state)
@@ -31,4 +37,28 @@ def handle_event(event:, context:)
     sierra.validate_processing
 
     $logger.info "Processing Complete"
+end
+
+##
+# Create a state manager to handle a single one-off update job
+def create_manual_job_state_manager(event)
+    Class.new do
+        def initialize(event)
+            @event = event
+        end
+
+        def start_time
+            @event['start_time']
+        end
+
+        def end_time
+            @event['end_time']
+        end
+
+        def start_offset
+            @event['start_offset']
+        end
+
+        def set_current_state(execution_time, execution_offset); end
+    end.new event
 end
