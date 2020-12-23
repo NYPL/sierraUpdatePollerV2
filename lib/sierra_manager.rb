@@ -6,7 +6,7 @@ require_relative 'sierra_record'
 
 # Manager for handling retrieval of records from the Sierra API
 class SierraManager
-    attr_reader :processing, :records_processed, :current_time, :sierra_client, :state
+    attr_reader :processing, :records_processed, :end_time, :sierra_client, :state
     attr_writer :processing, :records_processed
 
     @@request_batch_size = 50
@@ -17,6 +17,7 @@ class SierraManager
         @state = state
         @processing = true
         @records_processed = { :success => 0, :error => 0 }
+
         @sierra_client = NYPLRubyUtil::SierraApiClient.new(
             client_id: $kms_client.decrypt(ENV['SIERRA_OAUTH_ID']),
             client_secret: $kms_client.decrypt(ENV['SIERRA_OAUTH_SECRET'])
@@ -27,8 +28,8 @@ class SierraManager
     # This will process batches in a loop until @processing is false
     def fetch_updated_records
         # This sets the end fetch time for the current invocation and will be the start_time for the next invocation
-        @current_time = DateTime.now.to_s
-        $logger.info "Setting fetch (end) time to #{@current_time}"
+        @end_time = @state.respond_to?(:end_time) ? @state.end_time : DateTime.now.to_s
+        $logger.info "Setting fetch (end) time to #{@end_time}"
 
         # Fetch batches of records until no more remain to process
         while @processing do
@@ -51,7 +52,7 @@ class SierraManager
     # Fetches an individual record batch from Sierra
     def _fetch_record_batch
         # Set up the GET request params
-        update_date_str = "[#{@state.start_time},#{@current_time}]"
+        update_date_str = "[#{@state.start_time},#{@end_time}]"
         param_array = [['fields', ENV['RECORD_FIELDS']], ['offset', @state.start_offset], ['updatedDate', update_date_str]]
         
         # Make query against Sierra API
@@ -74,7 +75,7 @@ class SierraManager
     def _query_sierra_api param_array
         # Encode request params
         param_str = URI.encode_www_form(param_array)
-        $logger.debug "Querying Sierra API with params #{param_str}"
+        $logger.debug "Querying Sierra API: #{ENV['RECORD_TYPE']}?#{param_str}"
 
         # Execute request and handle errors
         begin
@@ -102,7 +103,7 @@ class SierraManager
         # and we should set the state to start from this point and exit this invocation
         # else we should fetch and process the next batch
         if sierra_batch.size < @@request_batch_size
-            @state.set_current_state(@current_time, 0)
+            @state.set_current_state(@end_time, 0)
             @processing = false
         else
             @state.set_current_state(@state.start_time, @state.start_offset + @@request_batch_size)
@@ -115,7 +116,7 @@ class SierraManager
         # of this invocation. Other error codes >=400 should be treated as exceptions.
         if results.code == 404
             $logger.info "No results received. Processing complete"
-            @state.set_current_state(@current_time, 0)
+            @state.set_current_state(@end_time, 0)
             @processing = false
         else
             $logger.error "Received unexpected response from Sierra API", { :status => results.body }

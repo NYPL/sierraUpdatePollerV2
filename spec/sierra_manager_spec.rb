@@ -34,7 +34,7 @@ describe SierraManager do
             
             @test_manager.fetch_updated_records
             expect(@test_manager.processing).to eq(false)
-            expect(@test_manager.current_time).to eq('current_time')
+            expect(@test_manager.end_time).to eq('current_time')
         end
     end
 

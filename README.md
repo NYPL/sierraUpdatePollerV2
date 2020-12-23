@@ -46,6 +46,12 @@ To run the function locally it may be invoked with rake, where FUNCTION is the n
 
 `rake run_local[FUNCTION]`
 
+One can also bypass the scheduled polling to run a "manual job" over a specific timestamp range. Note that doing this skips over reading/writing poller\_status files in S3. Note also that one must choose a timestamp range that can reasonably be processed within the lambda's configured max execution time (1m at writing).
+
+```
+sam local invoke -t sam.local.yml -e events/manual-job-event.json --profile nypl-sandbox
+```
+
 ## Testing
 
 Testing is provided via `rspec` with `mocha` for stubbing/mocking. The test suite can be invoked with `rake test`

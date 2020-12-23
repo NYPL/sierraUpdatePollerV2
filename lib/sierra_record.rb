@@ -3,7 +3,8 @@ class SierraBatch
     attr_reader :size, :offset, :records, :process_statuses
 
     def initialize record_response
-        @size = record_response.body['total']
+        # Size of batch is given by 'total' unless there are no results
+        @size = record_response.body['total'] || 0
         @offset = record_response.body['start']
         @records = record_response.body['entries']
         @process_statuses = { :success => 0, :error => 0 }
