@@ -76,6 +76,70 @@ deploy:
   on:
     branch: qa
 - provider: lambda
+  function_name: SierraBibUpdatePoller-qa
+  description: A service for polling the Sierra API for updates from the Bibs
+    endpoint
+  region: us-east-1
+  role: arn:aws:iam::946183545209:role/lambda-full-access
+  runtime: ruby2.7
+  timeout: 60
+  module_name: app
+  handler_name: handle_event
+  event:
+    schedule_expression: rate(5 minutes)
+  environment:
+    variables:
+      LOG_LEVEL: debug
+      S3_AWS_REGION: us-east-1
+      NYPL_CORE_S3_BASE_URL: https://s3.amazonaws.com
+      PLATFORM_API_BASE_URL: https://qa-platform.nypl.org/api/v0.1/
+      BUCKET_NAME: sierra-poller-state-qa
+      SIERRA_API_BASE_URL: https://nypl-sierra-test.nypl.org:443/iii/sierra-api
+      SIERRA_VERSION: v6
+      SIERRA_OAUTH_URL: https://nypl-sierra-test.nypl.org:443/iii/sierra-api/v3/token
+      SIERRA_OAUTH_ID: AQECAHh7ea2tyZ6phZgT4B9BDKwguhlFtRC6hgt+7HbmeFsrsgAAAHoweAYJKoZIhvcNAQcGoGswaQIBADBkBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDA6yJkJXvJKEQUcsCAIBEIA3oerpjzhASuO2ZGudbLoo3dCqgPJfcRu2fj1x2an58I9ldyKNArEv5rzJFYasX3FOrnMeqHdYAA==
+      SIERRA_OAUTH_SECRET: AQECAHh7ea2tyZ6phZgT4B9BDKwguhlFtRC6hgt+7HbmeFsrsgAAAHIwcAYJKoZIhvcNAQcGoGMwYQIBADBcBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDLQgrst3U3mqh14f/QIBEIAvR0AVyVvE/sYzsJV2rzFuBslo6xa1nV97F/furZ0V7s7/vZcMQ9gRN1N3B21wDp8=
+      RECORD_TYPE: bibs
+      RECORD_FIELDS: default,fixedFields,varFields,normTitle,normAuthor,orders,locations
+      SCHEMA_TYPE: BibPostRequest
+      KINESIS_STREAM: BibPostRequest-qa
+  access_key_id: "$AWS_ACCESS_KEY_ID_QA"
+  secret_access_key: "$AWS_SECRET_ACCESS_KEY_QA"
+  on:
+    branch: qa
+- provider: lambda
+  function_name: SierraItemUpdatePoller-qa
+  description: A service for polling the Sierra API for updates from the Items
+    endpoint
+  region: us-east-1
+  role: arn:aws:iam::946183545209:role/lambda-full-access
+  runtime: ruby2.7
+  timeout: 60
+  module_name: app
+  handler_name: handle_event
+  event:
+    schedule_expression: rate(5 minutes)
+  environment:
+    variables:
+      LOG_LEVEL: debug
+      S3_AWS_REGION: us-east-1
+      NYPL_CORE_S3_BASE_URL: https://s3.amazonaws.com
+      PLATFORM_API_BASE_URL: https://qa-platform.nypl.org/api/v0.1/
+      BUCKET_NAME: sierra-poller-state-qa
+      SIERRA_API_BASE_URL: https://nypl-sierra-test.nypl.org:443/iii/sierra-api
+      SIERRA_VERSION: v6
+      SIERRA_OAUTH_URL: https://nypl-sierra-test.nypl.org:443/iii/sierra-api/v3/token
+      SIERRA_OAUTH_ID: AQECAHh7ea2tyZ6phZgT4B9BDKwguhlFtRC6hgt+7HbmeFsrsgAAAHoweAYJKoZIhvcNAQcGoGswaQIBADBkBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDA6yJkJXvJKEQUcsCAIBEIA3oerpjzhASuO2ZGudbLoo3dCqgPJfcRu2fj1x2an58I9ldyKNArEv5rzJFYasX3FOrnMeqHdYAA==
+      SIERRA_OAUTH_SECRET: AQECAHh7ea2tyZ6phZgT4B9BDKwguhlFtRC6hgt+7HbmeFsrsgAAAHIwcAYJKoZIhvcNAQcGoGMwYQIBADBcBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDLQgrst3U3mqh14f/QIBEIAvR0AVyVvE/sYzsJV2rzFuBslo6xa1nV97F/furZ0V7s7/vZcMQ9gRN1N3B21wDp8=
+      RECORD_TYPE: items
+      RECORD_FIELDS: default,fixedFields,varFields
+      SCHEMA_TYPE: ItemPostRequest
+      KINESIS_STREAM: ItemPostRequest-qa
+  access_key_id: "$AWS_ACCESS_KEY_ID_QA"
+  secret_access_key: "$AWS_SECRET_ACCESS_KEY_QA"
+  on:
+    branch: qa
+- provider: lambda
   function_name: SierraHoldingUpdatePoller-production
   description: A service for polling the Sierra API for updates from the Holdings
     endpoint
@@ -109,6 +173,82 @@ deploy:
       RECORD_FIELDS: id,bibIds,bibIdLinks,itemIds,itemIdLinks,inheritLocation,allocationRule,accountingUnit,labelCode,serialCode1,serialCode2,serialCode3,serialCode4,claimOnDate,receivingLocationCode,vendorCode,updateCount,pieceCount,eCheckInCode,mediaTypeCode,updatedDate,createdDate,deletedDate,deleted,suppressed,fixedFields,varFields
       SCHEMA_TYPE: SierraHolding
       KINESIS_STREAM: SierraHoldingParser-production
+  access_key_id: "$AWS_ACCESS_KEY_ID_PRODUCTION"
+  secret_access_key: "$AWS_SECRET_ACCESS_KEY_PRODUCTION"
+  on:
+    branch: main
+- provider: lambda
+  function_name: SierraBibUpdatePoller-production
+  description: A service for polling the Sierra API for updates from the Bibs
+    endpoint
+  region: us-east-1
+  role: arn:aws:iam::946183545209:role/lambda-full-access
+  runtime: ruby2.7
+  timeout: 60
+  module_name: app
+  handler_name: handle_event
+  event:
+    schedule_expression: rate(1 minute)
+  vpc_config:
+    subnet_ids:
+    - subnet-59bcdd03
+    - subnet-5deecd15
+    security_group_ids:
+    - sg-116eeb60
+  environment:
+    variables:
+      LOG_LEVEL: debug
+      S3_AWS_REGION: us-east-1
+      NYPL_CORE_S3_BASE_URL: https://s3.amazonaws.com
+      PLATFORM_API_BASE_URL: https://platform.nypl.org/api/v0.1/
+      BUCKET_NAME: sierra-poller-state-production
+      SIERRA_API_BASE_URL: https://ilsstaff.nypl.org:443/iii/sierra-api
+      SIERRA_OAUTH_URL: https://ilsstaff.nypl.org:443/iii/sierra-api/v3/token
+      SIERRA_OAUTH_ID: AQECAHh7ea2tyZ6phZgT4B9BDKwguhlFtRC6hgt+7HbmeFsrsgAAAHoweAYJKoZIhvcNAQcGoGswaQIBADBkBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDKwPp4FB9Xx0spVyFwIBEIA34CUI1a5kKePBaRIJ2Wou+KDvCmrh+tDyOSiBbIb3zXo2sbj2UGfwKCdlF2GB0p/UnmQ2ilPwgw==
+      SIERRA_OAUTH_SECRET: AQECAHh7ea2tyZ6phZgT4B9BDKwguhlFtRC6hgt+7HbmeFsrsgAAAIMwgYAGCSqGSIb3DQEHBqBzMHECAQAwbAYJKoZIhvcNAQcBMB4GCWCGSAFlAwQBLjARBAwM8xL3gQb/QIsIWykCARCAP7hsMLN/VeEhZrHsYKQkkdCycujr8Wg5X8zLsrRddPT02UhBGfKWTn10xOIarqUAnu6buZWv6ns2g+pAVtvfWw==
+      SIERRA_VERSION: v6
+      RECORD_TYPE: bibs
+      RECORD_FIELDS: default,fixedFields,varFields,normTitle,normAuthor,orders,locations
+      SCHEMA_TYPE: BibPostRequest
+      KINESIS_STREAM: BibPostRequest-production
+  access_key_id: "$AWS_ACCESS_KEY_ID_PRODUCTION"
+  secret_access_key: "$AWS_SECRET_ACCESS_KEY_PRODUCTION"
+  on:
+    branch: main
+- provider: lambda
+  function_name: SierraItemUpdatePoller-production
+  description: A service for polling the Sierra API for updates from the Items
+    endpoint
+  region: us-east-1
+  role: arn:aws:iam::946183545209:role/lambda-full-access
+  runtime: ruby2.7
+  timeout: 60
+  module_name: app
+  handler_name: handle_event
+  event:
+    schedule_expression: rate(1 minute)
+  vpc_config:
+    subnet_ids:
+    - subnet-59bcdd03
+    - subnet-5deecd15
+    security_group_ids:
+    - sg-116eeb60
+  environment:
+    variables:
+      LOG_LEVEL: debug
+      S3_AWS_REGION: us-east-1
+      NYPL_CORE_S3_BASE_URL: https://s3.amazonaws.com
+      PLATFORM_API_BASE_URL: https://platform.nypl.org/api/v0.1/
+      BUCKET_NAME: sierra-poller-state-production
+      SIERRA_API_BASE_URL: https://ilsstaff.nypl.org:443/iii/sierra-api
+      SIERRA_OAUTH_URL: https://ilsstaff.nypl.org:443/iii/sierra-api/v3/token
+      SIERRA_OAUTH_ID: AQECAHh7ea2tyZ6phZgT4B9BDKwguhlFtRC6hgt+7HbmeFsrsgAAAHoweAYJKoZIhvcNAQcGoGswaQIBADBkBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDKwPp4FB9Xx0spVyFwIBEIA34CUI1a5kKePBaRIJ2Wou+KDvCmrh+tDyOSiBbIb3zXo2sbj2UGfwKCdlF2GB0p/UnmQ2ilPwgw==
+      SIERRA_OAUTH_SECRET: AQECAHh7ea2tyZ6phZgT4B9BDKwguhlFtRC6hgt+7HbmeFsrsgAAAIMwgYAGCSqGSIb3DQEHBqBzMHECAQAwbAYJKoZIhvcNAQcBMB4GCWCGSAFlAwQBLjARBAwM8xL3gQb/QIsIWykCARCAP7hsMLN/VeEhZrHsYKQkkdCycujr8Wg5X8zLsrRddPT02UhBGfKWTn10xOIarqUAnu6buZWv6ns2g+pAVtvfWw==
+      SIERRA_VERSION: v6
+      RECORD_TYPE: items
+      RECORD_FIELDS: default,fixedFields,varFields
+      SCHEMA_TYPE: ItemPostRequest
+      KINESIS_STREAM: ItemPostRequest-production
   access_key_id: "$AWS_ACCESS_KEY_ID_PRODUCTION"
   secret_access_key: "$AWS_SECRET_ACCESS_KEY_PRODUCTION"
   on:
