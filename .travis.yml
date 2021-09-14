@@ -86,7 +86,7 @@ deploy:
   module_name: app
   handler_name: handle_event
   event:
-    schedule_expression: rate(1 hour)
+    schedule_expression: rate(5 minutes)
   environment:
     variables:
       LOG_LEVEL: debug
@@ -118,7 +118,7 @@ deploy:
   module_name: app
   handler_name: handle_event
   event:
-    schedule_expression: rate(1 hour)
+    schedule_expression: rate(5 minutes)
   environment:
     variables:
       LOG_LEVEL: debug
@@ -132,7 +132,7 @@ deploy:
       SIERRA_OAUTH_ID: AQECAHh7ea2tyZ6phZgT4B9BDKwguhlFtRC6hgt+7HbmeFsrsgAAAHoweAYJKoZIhvcNAQcGoGswaQIBADBkBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDA6yJkJXvJKEQUcsCAIBEIA3oerpjzhASuO2ZGudbLoo3dCqgPJfcRu2fj1x2an58I9ldyKNArEv5rzJFYasX3FOrnMeqHdYAA==
       SIERRA_OAUTH_SECRET: AQECAHh7ea2tyZ6phZgT4B9BDKwguhlFtRC6hgt+7HbmeFsrsgAAAHIwcAYJKoZIhvcNAQcGoGMwYQIBADBcBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDLQgrst3U3mqh14f/QIBEIAvR0AVyVvE/sYzsJV2rzFuBslo6xa1nV97F/furZ0V7s7/vZcMQ9gRN1N3B21wDp8=
       RECORD_TYPE: items
-      RECORD_FIELDS: default,fixedFields,varFields,normTitle,normAuthor,orders,locations
+      RECORD_FIELDS: default,fixedFields,varFields
       SCHEMA_TYPE: ItemPostRequest
       KINESIS_STREAM: ItemPostRequest-qa
   access_key_id: "$AWS_ACCESS_KEY_ID_QA"
@@ -188,7 +188,7 @@ deploy:
   module_name: app
   handler_name: handle_event
   event:
-    schedule_expression: rate(15 minutes)
+    schedule_expression: rate(1 minute)
   vpc_config:
     subnet_ids:
     - subnet-59bcdd03
@@ -226,7 +226,7 @@ deploy:
   module_name: app
   handler_name: handle_event
   event:
-    schedule_expression: rate(15 minutes)
+    schedule_expression: rate(1 minute)
   vpc_config:
     subnet_ids:
     - subnet-59bcdd03
@@ -246,7 +246,7 @@ deploy:
       SIERRA_OAUTH_SECRET: AQECAHh7ea2tyZ6phZgT4B9BDKwguhlFtRC6hgt+7HbmeFsrsgAAAIMwgYAGCSqGSIb3DQEHBqBzMHECAQAwbAYJKoZIhvcNAQcBMB4GCWCGSAFlAwQBLjARBAwM8xL3gQb/QIsIWykCARCAP7hsMLN/VeEhZrHsYKQkkdCycujr8Wg5X8zLsrRddPT02UhBGfKWTn10xOIarqUAnu6buZWv6ns2g+pAVtvfWw==
       SIERRA_VERSION: v6
       RECORD_TYPE: items
-      RECORD_FIELDS: default,fixedFields,varFields,normTitle,normAuthor,orders,locations
+      RECORD_FIELDS: default,fixedFields,varFields
       SCHEMA_TYPE: ItemPostRequest
       KINESIS_STREAM: ItemPostRequest-production
   access_key_id: "$AWS_ACCESS_KEY_ID_PRODUCTION"
