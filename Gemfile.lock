@@ -57,7 +57,7 @@ GEM
     rspec-support (3.10.2)
 
 PLATFORMS
-  x86_64-darwin-19
+  ruby
 
 DEPENDENCIES
   aws-sdk-s3
@@ -66,4 +66,4 @@ DEPENDENCIES
   rspec
 
 BUNDLED WITH
-   2.2.27
+   2.1.2
