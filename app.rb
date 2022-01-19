@@ -5,6 +5,7 @@ require_relative "lib/state_manager"
 require_relative "lib/sierra_manager"
 
 def init
+  ENV["AWS_SESSION_TOKEN"] = nil if ENV["AWS_SAM_LOCAL"]
   $logger = NYPLRubyUtil::NyplLogFormatter.new(STDOUT, level: ENV["LOG_LEVEL"])
   $kms_client = NYPLRubyUtil::KmsClient.new
   $kinesis_client = NYPLRubyUtil::KinesisClient.new({
