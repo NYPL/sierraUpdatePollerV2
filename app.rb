@@ -11,8 +11,8 @@ def init
   $kinesis_client = NYPLRubyUtil::KinesisClient.new({
     schema_string: ENV["SCHEMA_TYPE"],
     stream_name: ENV["KINESIS_STREAM"],
-    partition_key: "id"
-    # put batch size in here to match @@request_batch_size = 50 in sierra_manager.rb line 12?
+    partition_key: "id",
+    batch_size: 50
   })
 
   $logger.debug "Initialized function"
