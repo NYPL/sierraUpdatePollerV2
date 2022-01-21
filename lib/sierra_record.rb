@@ -19,10 +19,6 @@ class SierraBatch
         $logger.warn("Record (id# #{record['id']} failed avro validation", { status: e.message })
         @process_statuses[:error] += 1
         next
-      rescue NYPLError => e
-        $logger.warn("Record (id# #{record['id']} failed to write to kinesis", { status: e.message })
-        @process_statuses[:error] += 1
-        next
       end
 
       $logger.info("Successfully processed Record# #{record['id']}")

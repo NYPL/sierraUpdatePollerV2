@@ -37,16 +37,5 @@ describe SierraBatch do
       expect(@test_batch.process_statuses[:error]).to(eq(50))
       expect(@test_batch.process_statuses[:success]).to(eq(0))
     end
-
-    it "should increment errors if unable to send records to kinesis stream" do
-      mock_record = mock
-      mock_record.stubs(:encode_and_send_to_kinesis).raises(NYPLError).times(50)
-      SierraBatch::SierraRecord.stubs(:new).returns(mock_record).times(50)
-
-      @test_batch.encode_and_send_to_kinesis
-
-      expect(@test_batch.process_statuses[:error]).to(eq(50))
-      expect(@test_batch.process_statuses[:success]).to(eq(0))
-    end
   end
 end

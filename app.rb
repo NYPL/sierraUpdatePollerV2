@@ -12,7 +12,7 @@ def init
     schema_string: ENV["SCHEMA_TYPE"],
     stream_name: ENV["KINESIS_STREAM"],
     partition_key: "id",
-    batch_size: 50
+    batch_size: ENV["BATCH_SIZE"]
   })
 
   $logger.debug "Initialized function"

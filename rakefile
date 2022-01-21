@@ -3,7 +3,7 @@ require_relative "rake_helper"
 
 desc "Run test suite"
 task :test do
-  sh %( rspec -fd )
+  sh %( bundle exec rspec -fd )
 end
 
 desc "Run function locally. Accepts the name of the resource from the SAM config to select which function to invoke"
