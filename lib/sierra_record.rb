@@ -6,6 +6,7 @@ class SierraBatch
     @offset = record_response.body["start"]
     @records = record_response.body["entries"]
     @process_statuses = { success: 0, error: 0 }
+    @retry_count = ENV["RETRY_COUNT"]
   end
 
   def encode_and_send_to_kinesis
@@ -20,12 +21,16 @@ class SierraBatch
         @process_statuses[:error] += 1
         next
       end
-
-      $logger.info("Successfully processed Record# #{record['id']}")
-      @process_statuses[:success] += 1
     end
+
     $kinesis_client.push_records
+    @retry_count.times { $kinesis_client.retry_failed_records }
+    @process_statuses[:error] = $kinesis_client.failed_records.length
+
+    $logger.warn("#{remaining_failed_records.length} records failed to enter the kinesis stream:" +
+    remainging_failed_records.each { |record| "record with bibId #{record.bibIds} \n" })
   end
+  
 
   class SierraRecord
     attr_reader :record, :encoded_record
