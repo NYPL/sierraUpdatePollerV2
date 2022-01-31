@@ -1,14 +1,9 @@
 require "bundler/setup"
 require "nypl_ruby_util"
 
-<<<<<<< HEAD
-require_relative "lib/state_manager"
-require_relative "lib/sierra_manager"
-=======
 require_relative 'lib/state_manager'
 require_relative 'lib/manual_job_state_manager'
 require_relative 'lib/sierra_manager'
->>>>>>> qa
 
 def init
   ENV["AWS_SESSION_TOKEN"] = nil if ENV["AWS_SAM_LOCAL"]
