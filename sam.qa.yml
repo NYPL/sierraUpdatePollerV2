@@ -19,6 +19,8 @@ Globals:
         SIERRA_OAUTH_URL: https://nypl-sierra-test.nypl.org:443/iii/sierra-api/v3/token
         SIERRA_OAUTH_ID: AQECAHh7ea2tyZ6phZgT4B9BDKwguhlFtRC6hgt+7HbmeFsrsgAAAHoweAYJKoZIhvcNAQcGoGswaQIBADBkBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDA6yJkJXvJKEQUcsCAIBEIA3oerpjzhASuO2ZGudbLoo3dCqgPJfcRu2fj1x2an58I9ldyKNArEv5rzJFYasX3FOrnMeqHdYAA==
         SIERRA_OAUTH_SECRET: AQECAHh7ea2tyZ6phZgT4B9BDKwguhlFtRC6hgt+7HbmeFsrsgAAAHIwcAYJKoZIhvcNAQcGoGMwYQIBADBcBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDLQgrst3U3mqh14f/QIBEIAvR0AVyVvE/sYzsJV2rzFuBslo6xa1nV97F/furZ0V7s7/vZcMQ9gRN1N3B21wDp8=
+        BATCH_SIZE: 50
+        RETRY_COUNT: 3
 
 Resources:
   SierraHoldingUpdatePollerQA:
