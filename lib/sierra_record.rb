@@ -50,8 +50,5 @@ class SierraBatch
     def encode_and_send_to_kinesis
       $kinesis_client << @record
     end
-<<<<<<< HEAD
   end
-=======
->>>>>>> qa
 end
