@@ -55,3 +55,13 @@ sam local invoke -t sam.local.yml -e events/manual-job-event.json --profile nypl
 ## Testing
 
 Testing is provided via `rspec` with `mocha` for stubbing/mocking. The test suite can be invoked with `rake test`
+
+## Contributing
+
+1. Cut a feature branch off of develomenth
+2. Commit changes to your feature branch
+3. File a pull request against devlopment and assign a reviewer
+4. After the PR is accepted, merge into development
+5. Merge development > qa
+6. Confirm app deploys to QA and run appropriate testing
+7. Merge qa > main
