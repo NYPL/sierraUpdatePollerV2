@@ -18,6 +18,9 @@ end
 
 desc "Update lambda layers, environment_variables, vpc, and events"
 task :set_config do
+  # Basic utility commands to make working with SAM and AWS Lambda more friendly
+  require_relative 'rake_helper'
+
   rake_helper = RakeHelper.new
   rake_helper.update_lambda_configuration
   rake_helper.update_event
