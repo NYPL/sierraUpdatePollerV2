@@ -22,4 +22,4 @@ module "base" {
     security_group_ids = ["sg-aa74f1db"]
   }
 
-
+}

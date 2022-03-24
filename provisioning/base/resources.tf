@@ -69,6 +69,12 @@ resource "aws_lambda_function" "poller_lambda" {
     security_group_ids = var.vpc_config.security_group_ids
   }
 
+  # Load ENV vars from ./config/{environment}.env
+  environment {
+    variables = { for tuple in regexall("(.*?)=(.*)", file("../../config/${var.record_type}-${var.environment}.env")) : tuple[0] => tuple[1] }
+  }
+}
+
   resource "aws_cloudwatch_event_rule" "every_five_minutes" {
     name = "every-five-minutes"
     description = "Fires every five minutes"
@@ -88,10 +94,4 @@ resource "aws_lambda_function" "poller_lambda" {
       principal = "events.amazonaws.com"
       source_arn = "${aws_cloudwatch_event_rule.every_five_minutes.arn}"
   }
-}
-  # Load ENV vars from ./config/{environment}.env
-  environment {
-    variables = { for tuple in regexall("(.*?)=(.*)", file("../../config/${var.record_type}-${var.environment}.env")) : tuple[0] => tuple[1] }
-  }
-}
 
