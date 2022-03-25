@@ -2,3 +2,4 @@
 vendor/*
 *.code-workspace
 *terraform*
+dist.zip
