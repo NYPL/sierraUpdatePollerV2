@@ -45,7 +45,6 @@ resource "aws_s3_bucket_object" "uploaded_zip" {
   etag   = filemd5(data.archive_file.lambda_zip.output_path)
 }
 
-
 # Create the lambda:
 resource "aws_lambda_function" "poller_lambda" {
   description   = "A service for polling the Sierra API for updates from the Bibs endpoint"
