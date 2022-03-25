@@ -23,11 +23,6 @@ variable "record_type" {
   }
 }
 
-variable "vpc_config" {
-  type = map
-  description = "The name of the environnment (qa, production)"
-}
-
 # Package the app as a zip:
 data "archive_file" "lambda_zip" {
   type        = "zip"
@@ -50,11 +45,10 @@ resource "aws_lambda_function" "poller_lambda" {
   description   = "A service for polling the Sierra API for updates from the Bibs endpoint"
   function_name = "Sierra${var.record_type}UpdatePoller-${var.environment}"
   handler       = "app.handle_event"
-  memory_size   = 512
+  memory_size   = 128
   role          = "arn:aws:iam::946183545209:role/lambda-full-access"
   runtime       = "ruby2.7"
   timeout       = 60
-  layers = ["arn:aws:lambda:us-east-1:946183545209:layer:ruby-pg-sqlite-lambda:2"]
 
   # Location of the zipped code in S3:
   s3_bucket     = aws_s3_object.uploaded_zip.bucket
@@ -62,11 +56,6 @@ resource "aws_lambda_function" "poller_lambda" {
 
   # Trigger pulling code from S3 when the zip has changed:
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
-
-  vpc_config {
-    subnet_ids         = var.vpc_config.subnet_ids
-    security_group_ids = var.vpc_config.security_group_ids
-  }
 
   # Load ENV vars from ./config/{environment}.env
   environment {

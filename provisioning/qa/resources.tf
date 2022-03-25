@@ -18,9 +18,4 @@ module "base" {
   environment = "qa"
   record_type = "Bib"
 
-  vpc_config = {
-    subnet_ids         = ["subnet-21a3b244", "subnet-f35de0a9"]
-    security_group_ids = ["sg-aa74f1db"]
-  }
-
 }
