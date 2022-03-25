@@ -37,7 +37,7 @@ data "archive_file" "lambda_zip" {
 }
 
 # Upload the zipped app to S3:
-resource "aws_s3_bucket_object" "uploaded_zip" {
+resource "aws_s3_object" "uploaded_zip" {
   bucket = "sierra-poller-state-${var.environment}"
   key    = "Sierra${var.record_type}UpdatePoller-${var.environment}-dist.zip"
   acl    = "private"
@@ -57,8 +57,8 @@ resource "aws_lambda_function" "poller_lambda" {
   layers = ["arn:aws:lambda:us-east-1:946183545209:layer:ruby-pg-sqlite-lambda:2"]
 
   # Location of the zipped code in S3:
-  s3_bucket     = aws_s3_bucket_object.uploaded_zip.bucket
-  s3_key        = aws_s3_bucket_object.uploaded_zip.key
+  s3_bucket     = aws_s3_object.uploaded_zip.bucket
+  s3_key        = aws_s3_object.uploaded_zip.key
 
   # Trigger pulling code from S3 when the zip has changed:
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
