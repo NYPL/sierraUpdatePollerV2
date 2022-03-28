@@ -65,3 +65,14 @@ Testing is provided via `rspec` with `mocha` for stubbing/mocking. The test suit
 5. Merge development > qa
 6. Confirm app deploys to QA and run appropriate testing
 7. Merge qa > main
+
+## Deployment
+
+This app uses Travis-CI and terraform for deployment. Code pushed to qa and main trigger deployments to qa and production, respectively.
+
+Troubleshooting deployments
+In the case that you need to make terraform aware of a lambda resource that was created outside of terraform, for example a Lambda previously created in a Travis Deployment, you can import the existing resource like this:
+
+```
+terraform -chdir=provisioning/{branch} import module.base.aws_lambda_function.poller_instance Sierra{record_type}UpdatePoller-{branch}
+```
