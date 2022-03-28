@@ -62,9 +62,9 @@ Testing is provided via `rspec` with `mocha` for stubbing/mocking. The test suit
 2. Commit changes to your feature branch
 3. File a pull request against devlopment and assign a reviewer
 4. After the PR is accepted, merge into development
-5. Merge development > qa
+5. Merge development > qa. This triggers a QA deployment
 6. Confirm app deploys to QA and run appropriate testing
-7. Merge qa > main
+7. Merge qa > main. This triggers a prod deployment.
 
 ## Deployment
 
