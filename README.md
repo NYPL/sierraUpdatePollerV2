@@ -55,3 +55,24 @@ sam local invoke -t sam.local.yml -e events/manual-job-event.json --profile nypl
 ## Testing
 
 Testing is provided via `rspec` with `mocha` for stubbing/mocking. The test suite can be invoked with `rake test`
+
+## Contributing
+
+1. Cut a feature branch off of develomenth
+2. Commit changes to your feature branch
+3. File a pull request against devlopment and assign a reviewer
+4. After the PR is accepted, merge into development
+5. Merge development > qa. This triggers a QA deployment
+6. Confirm app deploys to QA and run appropriate testing
+7. Merge qa > main. This triggers a prod deployment.
+
+## Deployment
+
+This app uses Travis-CI and terraform for deployment. Code pushed to qa and main trigger deployments to qa and production, respectively.
+
+Troubleshooting deployments
+In the case that you need to make terraform aware of a lambda resource that was created outside of terraform, for example a Lambda previously created in a Travis Deployment, you can import the existing resource like this:
+
+```
+terraform -chdir=provisioning/{branch} import module.base.aws_lambda_function.poller_instance Sierra{record_type}UpdatePoller-{branch}
+```
