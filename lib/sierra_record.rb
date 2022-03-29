@@ -31,13 +31,10 @@ class SierraBatch
     @retry_count.times { $kinesis_client.retry_failed_records }
     @process_statuses[:error] += $kinesis_client.failed_records.length
     @process_statuses[:success] += (@records.length - @process_statuses[:error])
-    #Decode and log ids of failed records
-    $kinesis_client.decode_failed_records
     unless $kinesis_client.failed_records.empty?
       ids = $kinesis_client.failed_records.map{ |record| record[:id] }.join(", ")
+      $logger.warn("#{$kinesis_client.failed_records.length} records failed to enter the kinesis stream, with ids: #{ids}")
     end
-
-    $logger.warn("#{$kinesis_client.failed_records.length} records failed to enter the kinesis stream, with ids: #{ids}")
   end
 
   class SierraRecord
