@@ -12,10 +12,14 @@ terraform {
 }
 
 module "base" {
-  # TO DO: create for_each so qa push does all three record types from this file
+  # for_each so qa push does all three record types from this file:
+  #
+  # for_each = {
+  #   bib = "Bib", item = "Item", holding = "Holding"
+  # }
+  # record_type = each.value
   source = "../base"
 
   environment = "qa"
   record_type = "Bib"
-
 }
