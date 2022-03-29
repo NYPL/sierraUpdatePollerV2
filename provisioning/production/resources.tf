@@ -20,6 +20,6 @@ module "base" {
   # record_type = each.value
   source = "../base"
 
-  environment = "qa"
+  environment = "production"
   record_type = "Bib"
 }
