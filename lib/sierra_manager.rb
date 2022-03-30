@@ -38,7 +38,7 @@ class SierraManager
   end
 
   def validate_processing
-    $logger.info "Processed #{@records_processed[:success]} successfully and #{@records_processed[:error]} with errors"
+    $logger.info "Retreiver processed #{@records_processed[:success]} successfully and #{@records_processed[:error]} with errors"
     total_processed = @records_processed[:success] + @records_processed[:error]
     if @records_processed[:error] / total_processed.to_f >= 0.01
       $logger.error "Received too many errors as percentage of records processed", @records_processed
@@ -125,7 +125,7 @@ class SierraManager
   end
 
   def _update_processing_counts(batch_counts)
-    $logger.debug "Processed #{batch_counts[:success]} records successfully in batch"
+    $logger.debug "Retriever processed #{batch_counts[:success]} records successfully in batch"
     @records_processed[:success] += batch_counts[:success]
 
     $logger.debug "Errored on #{batch_counts[:error]} records in batch"
