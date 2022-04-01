@@ -19,8 +19,7 @@ class SierraManager
     @records_processed = { success: 0, error: 0 }
     @sierra_client = NYPLRubyUtil::SierraApiClient.new(
       client_id: $kms_client.decrypt(ENV["SIERRA_OAUTH_ID"]),
-      client_secret: $kms_client.decrypt(ENV["SIERRA_OAUTH_SECRET"],
-      batch_size: @@request_batch_size)
+      client_secret: $kms_client.decrypt(ENV["SIERRA_OAUTH_SECRET"])
     )
   end
 
