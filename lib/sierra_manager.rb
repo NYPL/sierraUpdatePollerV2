@@ -2,14 +2,14 @@ require "date"
 require "nypl_ruby_util"
 require "uri"
 
-require_relative "sierra_record"
+require_relative "sierra_batch"
 
 # Manager for handling retrieval of records from the Sierra API
 class SierraManager
   attr_accessor :processing, :records_processed
   attr_reader :current_time, :sierra_client, :state
 
-  @@request_batch_size = 50
+  @@request_batch_size = ENV["REQUEST_BATCH_SIZE"].to_i || 50
 
   # Set state object and other attributes necessary for processing records
   # Also constructs a sierra_client object
@@ -19,7 +19,8 @@ class SierraManager
     @records_processed = { success: 0, error: 0 }
     @sierra_client = NYPLRubyUtil::SierraApiClient.new(
       client_id: $kms_client.decrypt(ENV["SIERRA_OAUTH_ID"]),
-      client_secret: $kms_client.decrypt(ENV["SIERRA_OAUTH_SECRET"])
+      client_secret: $kms_client.decrypt(ENV["SIERRA_OAUTH_SECRET"],
+      batch_size: @@request_batch_size)
     )
   end
 
@@ -53,7 +54,7 @@ class SierraManager
     # Set up the GET request params
     update_date_str = "[#{@state.start_time},#{@current_time}]"
     param_array = [["fields", ENV["RECORD_FIELDS"]], ["offset", @state.start_offset],
-                   ["updatedDate", update_date_str]]
+                   ["updatedDate", update_date_str], ["limit", @@request_batch_size]]
 
     # Make query against Sierra API
     _query_sierra_api(param_array)
