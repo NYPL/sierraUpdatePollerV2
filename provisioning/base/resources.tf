@@ -48,7 +48,7 @@ resource "aws_lambda_function" "poller_lambda" {
   memory_size   = 128
   role          = "arn:aws:iam::946183545209:role/lambda-full-access"
   runtime       = "ruby2.7"
-  timeout       = 60
+  timeout       = 900
 
   # Location of the zipped code in S3:
   s3_bucket     = aws_s3_object.uploaded_zip.bucket
@@ -62,6 +62,8 @@ resource "aws_lambda_function" "poller_lambda" {
     variables = { for tuple in regexall("(.*?)=(.*)", file("../../config/${var.record_type}-${var.environment}.env")) : tuple[0] => tuple[1] }
   }
 }
+
+
 
   # resource "aws_cloudwatch_event_rule" "every_five_minutes" {
   #   name = "every-five-minutes"
