@@ -63,11 +63,7 @@ resource "aws_lambda_function" "poller_lambda" {
   }
 }
 
-resource "aws_lambda_provisioned_concurrency_config" "poller_concurrency" {
-  function_name                     = aws_lambda_function.poller_lambda.function_name
-  provisioned_concurrent_executions = 1
-  qualifier                         = aws_lambda_function.poller_lambda.version
-}
+
 
   # resource "aws_cloudwatch_event_rule" "every_five_minutes" {
   #   name = "every-five-minutes"
