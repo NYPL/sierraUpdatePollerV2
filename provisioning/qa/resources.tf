@@ -19,7 +19,6 @@ module "base" {
   # }
   # record_type = each.value
   source = "../base"
-  publish = true
 
   environment = "qa"
   record_type = "Bib"

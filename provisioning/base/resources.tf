@@ -3,22 +3,22 @@ provider "aws" {
 }
 
 variable "environment" {
-  type = string
-  default = "qa"
+  type        = string
+  default     = "qa"
   description = "The name of the environment (qa, production). This controls the name of the lambda and the env vars loaded."
 
   validation {
-    condition = contains(["qa", "production"], var.environment)
+    condition     = contains(["qa", "production"], var.environment)
     error_message = "The environment must be 'qa' or 'production'."
   }
 }
 
 variable "record_type" {
-  type = string
+  type        = string
   description = "The name of the record type. This controls the name of the lambda and the env vars loaded."
 
   validation {
-    condition = contains(["Bib", "Item", "Holding"], var.record_type)
+    condition     = contains(["Bib", "Item", "Holding"], var.record_type)
     error_message = "The environment must be 'Bib', 'Item', or 'Holding'."
   }
 }
@@ -42,17 +42,18 @@ resource "aws_s3_object" "uploaded_zip" {
 
 # Create the lambda:
 resource "aws_lambda_function" "poller_lambda" {
-  description   = "A service for polling the Sierra API for updates from the Bibs endpoint"
-  function_name = "Sierra${var.record_type}UpdatePoller-${var.environment}"
-  handler       = "app.handle_event"
-  memory_size   = 128
-  role          = "arn:aws:iam::946183545209:role/lambda-full-access"
-  runtime       = "ruby2.7"
-  timeout       = 900
+  description                    = "A service for polling the Sierra API for updates from the Bibs endpoint"
+  function_name                  = "Sierra${var.record_type}UpdatePoller-${var.environment}"
+  handler                        = "app.handle_event"
+  memory_size                    = 128
+  role                           = "arn:aws:iam::946183545209:role/lambda-full-access"
+  runtime                        = "ruby2.7"
+  reserved_concurrent_executions = 1
+  timeout                        = 900
 
   # Location of the zipped code in S3:
-  s3_bucket     = aws_s3_object.uploaded_zip.bucket
-  s3_key        = aws_s3_object.uploaded_zip.key
+  s3_bucket = aws_s3_object.uploaded_zip.bucket
+  s3_key    = aws_s3_object.uploaded_zip.key
 
   # Trigger pulling code from S3 when the zip has changed:
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
@@ -63,29 +64,23 @@ resource "aws_lambda_function" "poller_lambda" {
   }
 }
 
-resource "aws_lambda_provisioned_concurrency_config" "poller_concurrency" {
-  function_name                     = aws_lambda_function.poller_lambda.function_name
-  provisioned_concurrent_executions = 1
-  qualifier                         = aws_lambda_function.poller_lambda.version
-}
+# resource "aws_cloudwatch_event_rule" "every_five_minutes" {
+#   name = "every-five-minutes"
+#   description = "Fires every five minutes"
+#   schedule_expression = "rate(5 minutes)"
+# }
 
-  # resource "aws_cloudwatch_event_rule" "every_five_minutes" {
-  #   name = "every-five-minutes"
-  #   description = "Fires every five minutes"
-  #   schedule_expression = "rate(5 minutes)"
-  # }
+# resource "aws_cloudwatch_event_target" "run_poller_every_five_minutes" {
+#     rule = "${aws_cloudwatch_event_rule.every_five_minutes.name}"
+#     target_id = "Sierra${var.record_type}UpdatePoller-${var.environment}"
+#     arn = "${aws_lambda_function.poller_lambda.arn}"
+# }
 
-  # resource "aws_cloudwatch_event_target" "run_poller_every_five_minutes" {
-  #     rule = "${aws_cloudwatch_event_rule.every_five_minutes.name}"
-  #     target_id = "Sierra${var.record_type}UpdatePoller-${var.environment}"
-  #     arn = "${aws_lambda_function.poller_lambda.arn}"
-  # }
-
-  # resource "aws_lambda_permission" "allow_cloudwatch_to_call_pollers" {
-  #     statement_id = "AllowExecutionFromCloudWatch"
-  #     action = "lambda:InvokeFunction"
-  #     function_name = "Sierra${var.record_type}UpdatePoller-${var.environment}"
-  #     principal = "events.amazonaws.com"
-  #     source_arn = "${aws_cloudwatch_event_rule.every_five_minutes.arn}"
-  # }
+# resource "aws_lambda_permission" "allow_cloudwatch_to_call_pollers" {
+#     statement_id = "AllowExecutionFromCloudWatch"
+#     action = "lambda:InvokeFunction"
+#     function_name = "Sierra${var.record_type}UpdatePoller-${var.environment}"
+#     principal = "events.amazonaws.com"
+#     source_arn = "${aws_cloudwatch_event_rule.every_five_minutes.arn}"
+# }
 
