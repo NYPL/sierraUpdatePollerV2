@@ -37,7 +37,7 @@ class SierraBatch
       ids = $kinesis_client.failed_records.map{ |record| record[:id] }.join(", ")
       $logger.warn("#{$kinesis_client.failed_records.length} records failed to enter the kinesis stream, with ids: #{ids}")
     end
-    logger.info("Records sent to kinesis in #{Time.now - start_time} seconds")
+    $logger.info("Records sent to kinesis in #{Time.now - start_time} seconds")
   end
 
   class SierraRecord
