@@ -75,11 +75,13 @@ class SierraManager
   def _query_sierra_api(param_array)
     # Encode request params
     param_str = URI.encode_www_form(param_array)
+    start_time = Time.now
     $logger.debug("Querying Sierra API with params #{param_str}")
 
     # Execute request and handle errors
     begin
       result = @sierra_client.get("/#{ENV['SIERRA_VERSION']}/#{ENV['RECORD_TYPE']}?#{param_str}")
+      $logger.info("Received Sierra response in #{Time.now - start_time} seconds")
     rescue Exception => e
       $logger.error("Failed to query Sierra API", { status: e.message })
       raise SierraError, "Received error from Sierra API. Review logs"
