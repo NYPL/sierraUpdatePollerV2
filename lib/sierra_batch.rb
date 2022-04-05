@@ -13,6 +13,7 @@ class SierraBatch
 
   def encode_and_send_to_kinesis
     start_time = Time.now
+    $logger.info("Batch write to kinesis starting at #{start_time}")
     #Send individual records to $kinesis_client and log encoding errors
     @records.each do |record|
       sierra_record = SierraRecord.new(record)
