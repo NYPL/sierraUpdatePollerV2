@@ -19,7 +19,6 @@ class SierraBatch
 
       begin
         sierra_record.encode_and_send_to_kinesis
-        # $logger.info("Sent record to kinesis stream record ##{record['id']}")
       rescue AvroError => e
         $logger.warn("Record (id# #{record['id']} failed avro validation", { status: e.message })
         @process_statuses[:error] += 1
