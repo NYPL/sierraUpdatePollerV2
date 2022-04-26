@@ -59,13 +59,6 @@ describe SierraManager do
 
             @test_manager.send(:_fetch_record_batch)
         end
-
-        it 'should query the Sierra API with query settings for deleted records when environment indicates DELETE'
-          @test_manager.stubs(:_query_sierra_api)
-              .with([['fields', 'test_fields'], ['offset', 0], ['updatedDate', '[start_time,]']])
-
-          @test_manager.send(:_fetch_record_batch)
-        end
     end
 
     describe '#_parse_result_batch' do
