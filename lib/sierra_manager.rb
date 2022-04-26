@@ -48,12 +48,28 @@ class SierraManager
 
   private
 
+  # generates the updatedDate param for updates
+  def _update_params
+    update_date_str = "[#{@state.start_time},#{@current_time}]"
+    ["updatedDate", update_date_str]
+  end
+
+  # gets the current date from the current time
+  def _current_date
+    @current_time.to_date
+  end
+
+  # generates the deletedDate param for deletes
+  def _delete_params
+     ["deletedDate", "[#{@state.start_time},#{_current_date}]"]
+  end
+
   # Fetches an individual record batch from Sierra
   def _fetch_record_batch
     # Set up the GET request params
-    update_date_str = "[#{@state.start_time},#{@current_time}]"
+    update_params = ENV['UPDATE_TYPE'] == 'delete' ? _delete_params : update_params
     param_array = [["fields", ENV["RECORD_FIELDS"]], ["offset", @state.start_offset],
-                   ["updatedDate", update_date_str]]
+                   update_params]
 
     # Make query against Sierra API
     _query_sierra_api(param_array)
@@ -103,7 +119,7 @@ class SierraManager
     # and we should set the state to start from this point and exit this invocation
     # else we should fetch and process the next batch
     if sierra_batch.size < @@request_batch_size
-      @state.set_current_state(@current_time, 0)
+      @state.set_current_state(ENV['UPDATE_TYPE'] == 'delete' ? @current_time : _current_date, 0)
       @processing = false
     else
       @state.set_current_state(@state.start_time, @state.start_offset + @@request_batch_size)

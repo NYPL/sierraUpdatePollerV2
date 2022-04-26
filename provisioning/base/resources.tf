@@ -13,14 +13,14 @@ variable "environment" {
   }
 }
 
-variable "record_type" {
+variable "deployment_name" {
   type = string
-  description = "The name of the record type. This controls the name of the lambda and the env vars loaded."
+  description = "The name of the deployment. This controls the name of the lambda and the s3 bucket."
+}
 
-  validation {
-    condition = contains(["Bib", "Item", "Holding"], var.record_type)
-    error_message = "The environment must be 'Bib', 'Item', or 'Holding'."
-  }
+variable "record_env" {
+  type = string
+  description = "The name of the env file to use for setting environment variables"
 }
 
 # Package the app as a zip:
@@ -34,7 +34,7 @@ data "archive_file" "lambda_zip" {
 # Upload the zipped app to S3:
 resource "aws_s3_object" "uploaded_zip" {
   bucket = "sierra-poller-state-${var.environment}"
-  key    = "Sierra${var.record_type}UpdatePoller-${var.environment}-dist.zip"
+  key    = "Sierra${var.deployment_name}UpdatePoller-${var.environment}-dist.zip"
   acl    = "private"
   source = data.archive_file.lambda_zip.output_path
   etag   = filemd5(data.archive_file.lambda_zip.output_path)
@@ -43,7 +43,7 @@ resource "aws_s3_object" "uploaded_zip" {
 # Create the lambda:
 resource "aws_lambda_function" "poller_lambda" {
   description   = "A service for polling the Sierra API for updates from the Bibs endpoint"
-  function_name = "Sierra${var.record_type}UpdatePoller-${var.environment}"
+  function_name = "Sierra${var.deployment_name}UpdatePoller-${var.environment}"
   handler       = "app.handle_event"
   memory_size   = 128
   role          = "arn:aws:iam::946183545209:role/lambda-full-access"
@@ -59,7 +59,7 @@ resource "aws_lambda_function" "poller_lambda" {
 
   # Load ENV vars from ./config/{environment}.env
   environment {
-    variables = { for tuple in regexall("(.*?)=(.*)", file("../../config/${var.record_type}-${var.environment}.env")) : tuple[0] => tuple[1] }
+    variables = { for tuple in regexall("(.*?)=(.*)", file("../../config/${var.record_env}-${var.environment}.env")) : tuple[0] => tuple[1] }
   }
 }
 
@@ -71,15 +71,14 @@ resource "aws_lambda_function" "poller_lambda" {
 
   # resource "aws_cloudwatch_event_target" "run_poller_every_five_minutes" {
   #     rule = "${aws_cloudwatch_event_rule.every_five_minutes.name}"
-  #     target_id = "Sierra${var.record_type}UpdatePoller-${var.environment}"
+  #     target_id = "Sierra${var.deployment_name}UpdatePoller-${var.environment}"
   #     arn = "${aws_lambda_function.poller_lambda.arn}"
   # }
 
   # resource "aws_lambda_permission" "allow_cloudwatch_to_call_pollers" {
   #     statement_id = "AllowExecutionFromCloudWatch"
   #     action = "lambda:InvokeFunction"
-  #     function_name = "Sierra${var.record_type}UpdatePoller-${var.environment}"
+  #     function_name = "Sierra${var.deployment_name}UpdatePoller-${var.environment}"
   #     principal = "events.amazonaws.com"
   #     source_arn = "${aws_cloudwatch_event_rule.every_five_minutes.arn}"
   # }
-
