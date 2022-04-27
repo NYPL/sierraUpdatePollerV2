@@ -67,7 +67,7 @@ class SierraManager
   # Fetches an individual record batch from Sierra
   def _fetch_record_batch
     # Set up the GET request params
-    update_params = ENV['UPDATE_TYPE'] == 'delete' ? _delete_params : update_params
+    update_params = ENV['UPDATE_TYPE'] == 'delete' ? _delete_params : _update_params
     param_array = [["fields", ENV["RECORD_FIELDS"]], ["offset", @state.start_offset],
                    update_params]
 
