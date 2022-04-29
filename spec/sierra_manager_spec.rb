@@ -101,6 +101,10 @@ describe SierraManager do
     end
 
     describe '#_process_batch' do
+        before(:each) do
+          @test_manager.instance_variable_set(:@current_time, DateTime.now)
+        end
+
         it 'should send batch to kinesis and reset state if batch is less than max size' do
             mock_batch = mock()
             mock_batch.stubs(:encode_and_send_to_kinesis).once

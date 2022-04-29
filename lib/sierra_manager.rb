@@ -7,7 +7,7 @@ require_relative "sierra_record"
 # Manager for handling retrieval of records from the Sierra API
 class SierraManager
   attr_accessor :processing, :records_processed
-  attr_reader :current_time, :sierra_client, :state
+  attr_reader :sierra_client, :state
 
   @@request_batch_size = 50
 
@@ -27,7 +27,7 @@ class SierraManager
   # This will process batches in a loop until @processing is false
   def fetch_updated_records
     # This sets the end fetch time for the current invocation and will be the start_time for the next invocation
-    @current_time = DateTime.now.to_s
+    @current_time = DateTime.now
     $logger.info "Setting fetch (end) time to #{@current_time}"
 
     # Fetch batches of records until no more remain to process
@@ -46,6 +46,11 @@ class SierraManager
     end
   end
 
+
+  def current_time
+    @current_time.to_s
+  end
+  
   private
 
   # generates the updatedDate param for updates
@@ -56,7 +61,7 @@ class SierraManager
 
   # gets the current date from the current time
   def _current_date
-    @current_time.to_date
+    @current_time.to_date.to_s
   end
 
   # generates the deletedDate param for deletes
