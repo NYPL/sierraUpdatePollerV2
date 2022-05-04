@@ -33,6 +33,7 @@ jobs:
     - terraform -chdir=provisioning/qa/bib_delete apply -auto-approve -input=false
     - terraform -chdir=provisioning/qa/item_update init -input=false
     - echo "Deploying Item Update to qa"
+    - terraform -chdir=provisioning/qa/item_update apply -auto-approve -input=false
     - terraform -chdir=provisioning/qa/item_delete init -input=false
     - echo "Deploying Item Delete to qa"
     - terraform -chdir=provisioning/qa/item_delete apply -auto-approve -input=false
@@ -52,6 +53,7 @@ jobs:
     - terraform -chdir=provisioning/production/bib_delete apply -auto-approve -input=false
     - terraform -chdir=provisioning/production/item_update init -input=false
     - echo "Deploying Item Update to production"
+    - terraform -chdir=provisioning/production/item_update apply -auto-approve -input=false
     - terraform -chdir=provisioning/production/item_delete init -input=false
     - echo "Deploying Item Delete to production"
     - terraform -chdir=provisioning/production/item_delete apply -auto-approve -input=false
