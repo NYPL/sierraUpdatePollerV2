@@ -24,6 +24,7 @@ ENV['RECORD_TYPE'] = 'test'
 ENV['RECORD_FIELDS'] = 'test_fields'
 ENV['SIERRA_VERSION'] = 'v0'
 ENV['RETRY_COUNT'] = '3'
+ENV['S3_KEY'] = 'SierraTest'
 
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate
