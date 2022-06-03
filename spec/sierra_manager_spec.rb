@@ -68,7 +68,7 @@ describe SierraManager do
 
         it 'should query the Sierra API with the current querry settings' do
             @test_manager.stubs(:_query_sierra_api)
-                .with([['fields', 'test_fields'], ['offset', 0], ['updatedDate', '[start_time,]'], ['limit', 100]])
+                .with([['fields', 'test_fields'], ['offset', 0], ['deletedDate', '[start_time,]'], ['limit', 100]])
 
             @test_manager.send(:_fetch_record_batch)
         end
