@@ -63,23 +63,3 @@ resource "aws_lambda_function" "poller_lambda" {
     variables = { for tuple in regexall("(.*?)=(.*)", file("../../config/${var.record_env}-${var.environment}.env")) : tuple[0] => tuple[1] }
   }
 }
-
-# resource "aws_cloudwatch_event_rule" "every_five_minutes" {
-#   name = "every-five-minutes"
-#   description = "Fires every five minutes"
-#   schedule_expression = "rate(5 minutes)"
-# }
-
-# resource "aws_cloudwatch_event_target" "run_poller_every_five_minutes" {
-#     rule = "${aws_cloudwatch_event_rule.every_five_minutes.name}"
-#     target_id = "Sierra${var.record_type}UpdatePoller-${var.environment}"
-#     arn = "${aws_lambda_function.poller_lambda.arn}"
-# }
-
-# resource "aws_lambda_permission" "allow_cloudwatch_to_call_pollers" {
-#     statement_id = "AllowExecutionFromCloudWatch"
-#     action = "lambda:InvokeFunction"
-#     function_name = "Sierra${var.record_type}UpdatePoller-${var.environment}"
-#     principal = "events.amazonaws.com"
-#     source_arn = "${aws_cloudwatch_event_rule.every_five_minutes.arn}"
-# }
