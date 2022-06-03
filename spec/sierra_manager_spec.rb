@@ -68,8 +68,8 @@ describe SierraManager do
 
         it 'should query the Sierra API with the current querry settings' do
             @test_manager.stubs(:_query_sierra_api)
-                .with([['fields', 'test_fields'], ['offset', 0], ['deletedDate', '[start_time,]']])
-
+                .with([['fields', 'test_fields'], ['offset', 0], ['updatedDate', '[start_time,]'], ['limit', 100]])
+            
             @test_manager.send(:_fetch_record_batch)
         end
 
@@ -144,14 +144,14 @@ describe SierraManager do
         it 'should send batch to kinesis and set state for max size if batch matches max size' do
             mock_batch = mock()
             mock_batch.stubs(:encode_and_send_to_kinesis).once
-            mock_batch.stubs(:size).returns(50).once
-            mock_batch.stubs(:process_statuses).returns({ :success => 50, :error => 0 }).once
+            mock_batch.stubs(:size).returns(100).once
+            mock_batch.stubs(:process_statuses).returns({ :success => 100, :error => 0 }).once
 
             SierraBatch.stubs(:new).returns(mock_batch)
 
-            @test_manager.stubs(:_update_processing_counts).with({ :success => 50, :error => 0 }).once
-            @test_manager.state.stubs(:set_current_state).with('start_time', 50).once
-
+            @test_manager.stubs(:_update_processing_counts).with({ :success => 100, :error => 0 }).once
+            @test_manager.state.stubs(:set_current_state).with('start_time', 100).once
+            
             @test_manager.send(:_process_batch, [])
 
             expect(@test_manager.processing).to eq(true)

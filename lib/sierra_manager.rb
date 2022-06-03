@@ -2,14 +2,14 @@ require "date"
 require "nypl_ruby_util"
 require "uri"
 
-require_relative "sierra_record"
+require_relative "sierra_batch"
 
 # Manager for handling retrieval of records from the Sierra API
 class SierraManager
   attr_accessor :processing, :records_processed
   attr_reader :sierra_client, :state
 
-  @@request_batch_size = 50
+  @@request_batch_size = ENV["REQUEST_BATCH_SIZE"].to_i || 50
 
   # Set state object and other attributes necessary for processing records
   # Also constructs a sierra_client object
@@ -72,9 +72,10 @@ class SierraManager
   # Fetches an individual record batch from Sierra
   def _fetch_record_batch
     # Set up the GET request params
+    update_date_str = "[#{@state.start_time},#{current_time}]"
     update_params = ENV['UPDATE_TYPE'] == 'delete' ? _delete_params : _update_params
     param_array = [["fields", ENV["RECORD_FIELDS"]], ["offset", @state.start_offset],
-                   update_params]
+                   ["updatedDate", update_date_str], ["limit", @@request_batch_size]]
 
     # Make query against Sierra API
     _query_sierra_api(param_array)
@@ -96,11 +97,13 @@ class SierraManager
   def _query_sierra_api(param_array)
     # Encode request params
     param_str = URI.encode_www_form(param_array)
+    start_time = Time.now
     $logger.debug("Querying Sierra API with params #{param_str}")
 
     # Execute request and handle errors
     begin
       result = @sierra_client.get("/#{ENV['SIERRA_VERSION']}/#{ENV['RECORD_TYPE']}?#{param_str}")
+      $logger.info("Received Sierra response in #{Time.now - start_time} seconds")
     rescue Exception => e
       $logger.error("Failed to query Sierra API", { status: e.message })
       raise SierraError, "Received error from Sierra API. Review logs"
