@@ -19,7 +19,7 @@ class StateManager
   def fetch_current_state
     # Fetch JSON object from S3
     begin
-      status_uri = URI("#{ENV['NYPL_CORE_S3_BASE_URL']}/#{ENV['BUCKET_NAME']}/#{ENV['SCHEMA_TYPE'].downcase}_poller_status.json")
+      status_uri = URI("#{ENV['NYPL_CORE_S3_BASE_URL']}/#{ENV['BUCKET_NAME']}/#{ENV['S3_KEY'].downcase}_poller_status.json")
       $logger.debug "Fetching state from #{status_uri}"
       response = Net::HTTP.get_response(status_uri)
     rescue Exception => e
