@@ -1,4 +1,4 @@
-require_relative "../lib/sierra_record"
+require_relative "../lib/sierra_batch"
 require_relative "./spec_helper"
 
 describe SierraBatch do

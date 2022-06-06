@@ -1,3 +1,5 @@
+require 'time'
+
 class SierraBatch
   attr_reader :size, :offset, :records, :process_statuses
 
@@ -10,13 +12,14 @@ class SierraBatch
   end
 
   def encode_and_send_to_kinesis
+    start_time = Time.now
+    $logger.info("Batch write to kinesis starting at #{start_time}")
     #Send individual records to $kinesis_client and log encoding errors
     @records.each do |record|
       sierra_record = SierraRecord.new(record)
 
       begin
         sierra_record.encode_and_send_to_kinesis
-        $logger.info("Sent record to kinesis stream record ##{record['id']}")
       rescue AvroError => e
         $logger.warn("Record (id# #{record['id']} failed avro validation", { status: e.message })
         @process_statuses[:error] += 1
@@ -35,6 +38,7 @@ class SierraBatch
       ids = $kinesis_client.failed_records.map{ |record| record[:id] }.join(", ")
       $logger.warn("#{$kinesis_client.failed_records.length} records failed to enter the kinesis stream, with ids: #{ids}")
     end
+    $logger.info("#{@records.length} records sent to kinesis in #{Time.now - start_time} seconds")
   end
 
   class SierraRecord
