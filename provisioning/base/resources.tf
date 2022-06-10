@@ -43,7 +43,7 @@ resource "aws_s3_object" "uploaded_zip" {
 # Create the lambda:
 resource "aws_lambda_function" "poller_lambda" {
   description                    = "A service for polling the Sierra API for updates from the Bibs endpoint"
-  function_name                  = "Sierra${var.record_type}UpdatePoller-${var.environment}"
+  function_name                  = "Sierra${var.deployment_name}UpdatePoller-${var.environment}"
   handler                        = "app.handle_event"
   memory_size                    = 128
   role                           = "arn:aws:iam::946183545209:role/lambda-full-access"
