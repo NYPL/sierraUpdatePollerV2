@@ -60,6 +60,6 @@ resource "aws_lambda_function" "poller_lambda" {
 
   # Load ENV vars from ./config/{environment}.env
   environment {
-    variables = { for tuple in regexall("(.*?)=(.*)", file("../../config/${var.record_env}-${var.environment}.env")) : tuple[0] => tuple[1] }
+    variables = { for tuple in regexall("(.*?)=(.*)", file("../../../config/${var.record_env}-${var.environment}.env")) : tuple[0] => tuple[1] }
   }
 }
