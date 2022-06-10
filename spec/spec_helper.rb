@@ -24,6 +24,7 @@ ENV['RECORD_TYPE'] = 'test'
 ENV['RECORD_FIELDS'] = 'test_fields'
 ENV['SIERRA_VERSION'] = 'v0'
 ENV['RETRY_COUNT'] = '3'
+ENV['S3_KEY'] = 'SierraTest'
 ENV['REQUEST_BATCH_SIZE'] = '100'
 
 RSpec.configure do |config|

@@ -31,7 +31,7 @@ describe SierraManager do
 
                 true
             }
-            
+
             @test_manager.fetch_updated_records
             expect(@test_manager.processing).to eq(false)
             expect(@test_manager.current_time).to eq('current_time')
@@ -56,8 +56,25 @@ describe SierraManager do
         it 'should query the Sierra API with the current querry settings' do
             @test_manager.stubs(:_query_sierra_api)
                 .with([['fields', 'test_fields'], ['offset', 0], ['updatedDate', '[start_time,]'], ['limit', 100]])
-            
+
             @test_manager.send(:_fetch_record_batch)
+        end
+    end
+
+    describe '#_fetch_record_batch when UPDATE_TYPE = \'delete\'' do
+        before(:each) do
+          ENV['UPDATE_TYPE'] = 'delete'
+        end
+
+        it 'should query the Sierra API with the current querry settings' do
+            @test_manager.stubs(:_query_sierra_api)
+                .with([['fields', 'test_fields'], ['offset', 0], ['deletedDate', '[start_time,]'], ['limit', 100]])
+
+            @test_manager.send(:_fetch_record_batch)
+        end
+
+        after(:each) do
+          ENV['UPDATE_TYPE'] = nil
         end
     end
 
@@ -86,7 +103,7 @@ describe SierraManager do
             @test_manager.sierra_client.stubs(:get)
                 .with('/v0/test?test=params')
                 .returns(true)
-            
+
             result = @test_manager.send(:_query_sierra_api, [['test', 'params']])
             expect(result).to eq(true)
         end
@@ -101,17 +118,24 @@ describe SierraManager do
     end
 
     describe '#_process_batch' do
+
+        current_time = DateTime.now
+
+        before(:each) do
+          @test_manager.instance_variable_set(:@current_time, current_time)
+        end
+
         it 'should send batch to kinesis and reset state if batch is less than max size' do
             mock_batch = mock()
             mock_batch.stubs(:encode_and_send_to_kinesis).once
             mock_batch.stubs(:size).returns(49).once
             mock_batch.stubs(:process_statuses).returns({ :success => 49, :error => 0 }).once
-    
+
             SierraBatch.stubs(:new).returns(mock_batch)
-            
+
             @test_manager.stubs(:_update_processing_counts).with({ :success => 49, :error => 0 }).once
-            @test_manager.state.stubs(:set_current_state).with(nil, 0).once
-            
+            @test_manager.state.stubs(:set_current_state).with(current_time.to_s, 0).once
+
             @test_manager.send(:_process_batch, [])
 
             expect(@test_manager.processing).to eq(false)
@@ -124,21 +148,66 @@ describe SierraManager do
             mock_batch.stubs(:process_statuses).returns({ :success => 100, :error => 0 }).once
 
             SierraBatch.stubs(:new).returns(mock_batch)
-            
+
             @test_manager.stubs(:_update_processing_counts).with({ :success => 100, :error => 0 }).once
             @test_manager.state.stubs(:set_current_state).with('start_time', 100).once
-            
+
             @test_manager.send(:_process_batch, [])
 
             expect(@test_manager.processing).to eq(true)
         end
     end
 
+    describe '#_process_batch when UPDATE_TYPE is \'delete\'' do
+      current_time = DateTime.now
+
+      before(:each) do
+        @test_manager.instance_variable_set(:@current_time, current_time)
+        ENV['UPDATE_TYPE'] = 'delete'
+      end
+
+      it 'should send batch to kinesis and reset state if batch is less than max size' do
+          mock_batch = mock()
+          mock_batch.stubs(:encode_and_send_to_kinesis).once
+          mock_batch.stubs(:size).returns(49).once
+          mock_batch.stubs(:process_statuses).returns({ :success => 49, :error => 0 }).once
+
+          SierraBatch.stubs(:new).returns(mock_batch)
+
+          @test_manager.stubs(:_update_processing_counts).with({ :success => 49, :error => 0 }).once
+          @test_manager.state.stubs(:set_current_state).with(current_time.to_date.to_s, 0).once
+
+          @test_manager.send(:_process_batch, [])
+
+          expect(@test_manager.processing).to eq(false)
+      end
+
+      it 'should send batch to kinesis and set state for max size if batch matches max size' do
+          mock_batch = mock()
+          mock_batch.stubs(:encode_and_send_to_kinesis).once
+          mock_batch.stubs(:size).returns(100).once
+          mock_batch.stubs(:process_statuses).returns({ :success => 100, :error => 0 }).once
+
+          SierraBatch.stubs(:new).returns(mock_batch)
+
+          @test_manager.stubs(:_update_processing_counts).with({ :success => 100, :error => 0 }).once
+          @test_manager.state.stubs(:set_current_state).with('start_time', 100).once
+
+          @test_manager.send(:_process_batch, [])
+
+          expect(@test_manager.processing).to eq(true)
+      end
+
+      after(:each) do
+        ENV['UPDATE_TYPE'] = nil
+      end
+    end
+
     describe '#_process_error' do
         it 'should treat a 404 error as an empty result and end processing records' do
             mock_results = mock()
             mock_results.stubs(:code).returns(404).once
-            
+
             @test_manager.state.stubs(:set_current_state).with(nil, 0)
 
             @test_manager.send(:_process_error, mock_results)
@@ -149,7 +218,7 @@ describe SierraManager do
             mock_results = mock()
             mock_results.stubs(:code).returns(500).twice
             mock_results.stubs(:body).returns('Test Error Message')
-            
+
             @test_manager.state.stubs(:set_current_state).never
 
             expect { @test_manager.send(:_process_error, mock_results) }.to raise_error(SierraError, 'Received unexpected 500 from Sierra API')

@@ -7,7 +7,7 @@ require_relative "sierra_batch"
 # Manager for handling retrieval of records from the Sierra API
 class SierraManager
   attr_accessor :processing, :records_processed
-  attr_reader :current_time, :sierra_client, :state
+  attr_reader :sierra_client, :state
 
   @@request_batch_size = ENV["REQUEST_BATCH_SIZE"].to_i || 50
 
@@ -27,8 +27,8 @@ class SierraManager
   # This will process batches in a loop until @processing is false
   def fetch_updated_records
     # This sets the end fetch time for the current invocation and will be the start_time for the next invocation
-    @current_time = DateTime.now.to_s
-    $logger.info "Setting fetch (end) time to #{@current_time}"
+    @current_time = DateTime.now
+    $logger.info "Setting fetch (end) time to #{current_time}"
 
     # Fetch batches of records until no more remain to process
     while @processing
@@ -46,14 +46,21 @@ class SierraManager
     end
   end
 
+
+  # Gets the current datetime and converts to date in case the app is configured for deletes
+  # Returns string representation of datetime/date
+  def current_time
+    @current_time && @current_time.send(ENV['UPDATE_TYPE'] == 'delete' ? :to_date : :to_s).to_s
+  end
+
   private
 
   # Fetches an individual record batch from Sierra
   def _fetch_record_batch
     # Set up the GET request params
-    update_date_str = "[#{@state.start_time},#{@current_time}]"
     param_array = [["fields", ENV["RECORD_FIELDS"]], ["offset", @state.start_offset],
-                   ["updatedDate", update_date_str], ["limit", @@request_batch_size]]
+                   [ENV['UPDATE_TYPE'] == 'delete' ? 'deletedDate' : 'updatedDate', "[#{@state.start_time},#{current_time}]"],
+                   ["limit", @@request_batch_size]]
 
     # Make query against Sierra API
     _query_sierra_api(param_array)
@@ -105,7 +112,7 @@ class SierraManager
     # and we should set the state to start from this point and exit this invocation
     # else we should fetch and process the next batch
     if sierra_batch.size < @@request_batch_size
-      @state.set_current_state(@current_time, 0)
+      @state.set_current_state(current_time, 0)
       @processing = false
     else
       @state.set_current_state(@state.start_time, @state.start_offset + @@request_batch_size)
@@ -118,7 +125,7 @@ class SierraManager
     # of this invocation. Other error codes >=400 should be treated as exceptions.
     if results.code == 404
       $logger.info "No results received. Processing complete"
-      @state.set_current_state(@current_time, 0)
+      @state.set_current_state(current_time, 0)
       @processing = false
     else
       $logger.error "Received unexpected response from Sierra API", { status: results.body }
