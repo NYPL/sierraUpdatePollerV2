@@ -16,6 +16,6 @@ module "base" {
 
   environment = "qa"
   deployment_name = "Item"
-  record_env = "Item"
+  record_env = "item"
 
 }
