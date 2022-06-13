@@ -16,7 +16,7 @@ module "base" {
 
   environment = "production"
   deployment_name = "Item"
-  record_env = "Item"
+  record_env = "item"
 
   vpc_config = {
     subnet_ids         = ["subnet-59bcdd03", "subnet-5deecd15"]
