@@ -27,7 +27,7 @@ variable "record_env" {
 data "archive_file" "lambda_zip" {
   type        = "zip"
   output_path = "${path.module}/dist.zip"
-  source_dir  = "../../"
+  source_dir  = "../../../"
   excludes    = [".git", ".terraform", "provisioning", "sam"]
 }
 
