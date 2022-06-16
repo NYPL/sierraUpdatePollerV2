@@ -24,7 +24,7 @@ jobs:
     - AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_QA
     script:
     - rm -rf vendor
-    - rake run_bundler
+    - bundle config set deployment 'true'; bundle config; bundle install --without test
     - terraform -chdir=provisioning/qa/bib_update init -input=false
     - echo "Deploying Bib Update to qa"
     - terraform -chdir=provisioning/qa/bib_update apply -auto-approve -input=false
@@ -44,7 +44,7 @@ jobs:
     - AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_PRODUCTION
     script:
     - rm -rf vendor
-    - rake run_bundler
+    - bundle config set deployment 'true'; bundle config; bundle install --without test
     - terraform -chdir=provisioning/production/bib_update init -input=false
     - echo "Deploying Bib Update to production"
     - terraform -chdir=provisioning/production/bib_update apply -auto-approve -input=false
