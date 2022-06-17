@@ -13,7 +13,7 @@ end
 
 desc "Run bundler for local development and deployment"
 task :run_bundler do
-  sh %( bundle config unset deployment; bundle install; bundle config set deployment 'true'; bundle install )
+  sh %( bundle config unset deployment; bundle install; bundle config set deployment 'true'; bundle config set path 'vendor/bundle'; bundle install )
 end
 
 desc "Update lambda layers, environment_variables, vpc, and events"
