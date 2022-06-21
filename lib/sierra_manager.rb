@@ -9,7 +9,7 @@ class SierraManager
   attr_accessor :processing, :records_processed
   attr_reader :sierra_client, :state
 
-  @@request_batch_size = ENV["REQUEST_BATCH_SIZE"].to_i || 50
+  @@request_batch_size = (ENV["REQUEST_BATCH_SIZE"] || 50).to_i
 
   # Set state object and other attributes necessary for processing records
   # Also constructs a sierra_client object
