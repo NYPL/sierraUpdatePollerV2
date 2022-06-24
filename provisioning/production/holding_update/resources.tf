@@ -15,6 +15,6 @@ module "base" {
   source = "../../base"
 
   environment = "production"
-  deployment_name = "HoldingUpdate"
-  record_env = "holding-update"
+  deployment_name = "Holding"
+  record_env = "holding"
 }
