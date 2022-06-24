@@ -26,7 +26,9 @@ class SierraBatch
         next
       end
     end
-    #Make sure that records are not unprocessed if total amount is not 
+
+    $logger.debug("Record ids", { ids: @records.map {|record| record['id'] } })
+    #Make sure that records are not unprocessed if total amount is not
     #divisible by $kinesis_client.batch_size. Any failed records are
     #saved in an instance variable on $kinesis_client
     $kinesis_client.push_records
