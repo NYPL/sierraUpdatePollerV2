@@ -8,7 +8,7 @@ class SierraBatch
     @offset = record_response.body["start"]
     @records = record_response.body["entries"]
     @process_statuses = { success: 0, error: 0 }
-    @retry_count = ENV["RETRY_COUNT"].to_i || 3
+    @retry_count = (ENV["RETRY_COUNT"] || 3).to_i
   end
 
   def encode_and_send_to_kinesis
