@@ -41,13 +41,13 @@ jobs:
     - echo "Deploying Item Delete to qa"
     - terraform -chdir=provisioning/qa/item_delete apply -auto-approve -input=false
     #Holding Delete
-    - terraform -chdir=provisioning/qa/holding_delete apply -auto-approve -input=false
-    - echo "Deploying Holding Delete to qa"
     - terraform -chdir=provisioning/qa/holding_delete init -input=false
+    - echo "Deploying Holding Delete to qa"
+    - terraform -chdir=provisioning/qa/holding_delete apply -auto-approve -input=false
     #Holding Update
-    - terraform -chdir=provisioning/qa/holding_update apply -auto-approve -input=false
-    - echo "Deploying Holding Update to qa"
     - terraform -chdir=provisioning/qa/holding_update init -input=false
+    - echo "Deploying Holding Update to qa"
+    - terraform -chdir=provisioning/qa/holding_update apply -auto-approve -input=false
     
   - stage: deploy production
     if: type IN (push) and branch = main
@@ -77,9 +77,9 @@ jobs:
     - echo "Deploying Holding Delete to production"
     - terraform -chdir=provisioning/production/holding_delete apply -auto-approve -input=false
     #Holding Update
-    - terraform -chdir=provisioning/production/holding_update apply -auto-approve -input=false
-    - echo "Deploying Holding Update to production"
     - terraform -chdir=provisioning/production/holding_update init -input=false
+    - echo "Deploying Holding Update to production"
+    - terraform -chdir=provisioning/production/holding_update apply -auto-approve -input=false
 env:
   global:
   - TF_VERSION=1.0.11
