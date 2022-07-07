@@ -1,4 +1,4 @@
-require_relative "../lib/sierra_record"
+require_relative "../lib/sierra_batch"
 require_relative "./spec_helper"
 
 describe SierraBatch do
@@ -16,7 +16,6 @@ describe SierraBatch do
     $kinesis_client.stubs(:retry_failed_records)
     $kinesis_client.stubs(:failed_records).returns([])
     $kinesis_client.stubs(:<<)
-    $kinesis_client.stubs(:decode_failed_records)
   end
 
   describe "#encode_and_send_to_kinesis" do
@@ -67,19 +66,8 @@ describe SierraBatch do
       $kinesis_client.stubs(:retry_failed_records)
       $kinesis_client.stubs(:failed_records).returns([])
       $kinesis_client.stubs(:<<)
-      $kinesis_client.stubs(:decode_failed_records)
       $kinesis_client.stubs(:push_records).once
 
-      @test_batch.encode_and_send_to_kinesis
-    end
-
-    it "should decode failed_records before logging them" do
-      $kinesis_client = mock
-      $kinesis_client.stubs(:retry_failed_records)
-      $kinesis_client.stubs(:failed_records).returns([])
-      $kinesis_client.stubs(:<<)
-      $kinesis_client.stubs(:push_records)
-      $kinesis_client.stubs(:decode_failed_records).once
       @test_batch.encode_and_send_to_kinesis
     end
 

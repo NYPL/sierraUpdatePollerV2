@@ -2,264 +2,85 @@ language: ruby
 rvm:
 - 2.7.0
 before_install:
+- wget https://releases.hashicorp.com/terraform/"$TF_VERSION"/terraform_"$TF_VERSION"_linux_amd64.zip
+- unzip terraform_"$TF_VERSION"_linux_amd64.zip
+- sudo mv terraform /usr/local/bin/
+- rm terraform_"$TF_VERSION"_linux_amd64.zip
 - gem update --system
 - gem install bundler
 - gem install aws-sdk-lambda
 - gem install aws-sdk-cloudwatchevents
 install:
 - rake run_bundler
-script:
-- rake test
-deploy:
-- provider: lambda
-  function_name: SierraHoldingUpdatePoller-dev
-  description: A service for polling the Sierra API for updates from the Holdings
-    endpoint
-  region: us-east-1
-  role: arn:aws:iam::224280085904:role/lambda_basic_execution
-  runtime: ruby2.7
-  timeout: 60
-  module_name: app
-  handler_name: handle_event
-  event:
-    schedule_expression: rate(1 hour)
-  environment:
-    variables:
-      LOG_LEVEL: debug
-      S3_AWS_REGION: us-east-1
-      NYPL_CORE_S3_BASE_URL: https://s3.amazonaws.com
-      PLATFORM_API_BASE_URL: https://dev-platform.nypl.org/api/v0.1/
-      BUCKET_NAME: sierra-poller-state-dev
-      SIERRA_API_BASE_URL: https://nypl-sierra-test.nypl.org:443/iii/sierra-api
-      SIERRA_VERSION: v6
-      SIERRA_OAUTH_URL: https://nypl-sierra-test.nypl.org:443/iii/sierra-api/v3/token
-      SIERRA_OAUTH_ID: AQICAHg44Tmwi+nLR/0IeFODcEqu2nSlqdDZMsDWalEb1O+LSQEPfTm0ZNPHAtRD1am3KPF8AAAAejB4BgkqhkiG9w0BBwagazBpAgEAMGQGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMCSeDlLbDCkrUw5HgAgEQgDe3aLUovzs4zQKOR/+UQXEOWF98UvjAvPijVSi2WlVme+6gvCDAj/Eicp26/VsAbxc2OhdMazUZ
-      SIERRA_OAUTH_SECRET: AQICAHg44Tmwi+nLR/0IeFODcEqu2nSlqdDZMsDWalEb1O+LSQGkTFrDp4UWdX4YCT2TX8iyAAAAcjBwBgkqhkiG9w0BBwagYzBhAgEAMFwGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMT5TuObnrfHCIbSk8AgEQgC8k9u2afElzRHRs+pPxjPsRGjPIrWQBD9VUssj3rE1IlRz4kF3FM8jc/GAyFKFsMA==
-      RECORD_TYPE: holdings
-      RECORD_FIELDS: id,bibIds,bibIdLinks,itemIds,itemIdLinks,inheritLocation,allocationRule,accountingUnit,labelCode,serialCode1,serialCode2,serialCode3,serialCode4,claimOnDate,receivingLocationCode,vendorCode,updateCount,pieceCount,eCheckInCode,mediaTypeCode,updatedDate,createdDate,deletedDate,deleted,suppressed,fixedFields,varFields
-      SCHEMA_TYPE: SierraHolding
-      KINESIS_STREAM: SierraHoldingParser-dev
-  access_key_id: "$AWS_ACCESS_KEY_ID_DEVELOPMENT"
-  secret_access_key: "$AWS_SECRET_ACCESS_KEY_DEVELOPMENT"
-  on:
-    branch: development
-- provider: lambda
-  function_name: SierraHoldingUpdatePoller-qa
-  description: A service for polling the Sierra API for updates from the Holdings
-    endpoint
-  region: us-east-1
-  role: arn:aws:iam::946183545209:role/lambda-full-access
-  runtime: ruby2.7
-  timeout: 60
-  module_name: app
-  handler_name: handle_event
-  event:
-    schedule_expression: rate(1 hour)
-  environment:
-    variables:
-      LOG_LEVEL: debug
-      S3_AWS_REGION: us-east-1
-      NYPL_CORE_S3_BASE_URL: https://s3.amazonaws.com
-      PLATFORM_API_BASE_URL: https://qa-platform.nypl.org/api/v0.1/
-      BUCKET_NAME: sierra-poller-state-qa
-      SIERRA_API_BASE_URL: https://nypl-sierra-test.nypl.org:443/iii/sierra-api
-      SIERRA_VERSION: v6
-      SIERRA_OAUTH_URL: https://nypl-sierra-test.nypl.org:443/iii/sierra-api/v3/token
-      SIERRA_OAUTH_ID: AQECAHh7ea2tyZ6phZgT4B9BDKwguhlFtRC6hgt+7HbmeFsrsgAAAHoweAYJKoZIhvcNAQcGoGswaQIBADBkBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDA6yJkJXvJKEQUcsCAIBEIA3oerpjzhASuO2ZGudbLoo3dCqgPJfcRu2fj1x2an58I9ldyKNArEv5rzJFYasX3FOrnMeqHdYAA==
-      SIERRA_OAUTH_SECRET: AQECAHh7ea2tyZ6phZgT4B9BDKwguhlFtRC6hgt+7HbmeFsrsgAAAHIwcAYJKoZIhvcNAQcGoGMwYQIBADBcBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDLQgrst3U3mqh14f/QIBEIAvR0AVyVvE/sYzsJV2rzFuBslo6xa1nV97F/furZ0V7s7/vZcMQ9gRN1N3B21wDp8=
-      RECORD_TYPE: holdings
-      RECORD_FIELDS: id,bibIds,bibIdLinks,itemIds,itemIdLinks,inheritLocation,allocationRule,accountingUnit,labelCode,serialCode1,serialCode2,serialCode3,serialCode4,claimOnDate,receivingLocationCode,vendorCode,updateCount,pieceCount,eCheckInCode,mediaTypeCode,updatedDate,createdDate,deletedDate,deleted,suppressed,fixedFields,varFields
-      SCHEMA_TYPE: SierraHolding
-      KINESIS_STREAM: SierraHoldingParser-qa
-  access_key_id: "$AWS_ACCESS_KEY_ID_QA"
-  secret_access_key: "$AWS_SECRET_ACCESS_KEY_QA"
-  on:
-    branch: qa
-- provider: lambda
-  function_name: SierraBibUpdatePoller-qa
-  description: A service for polling the Sierra API for updates from the Bibs
-    endpoint
-  region: us-east-1
-  role: arn:aws:iam::946183545209:role/lambda-full-access
-  runtime: ruby2.7
-  timeout: 60
-  module_name: app
-  handler_name: handle_event
-  event:
-    schedule_expression: rate(5 minutes)
-  environment:
-    variables:
-      LOG_LEVEL: debug
-      S3_AWS_REGION: us-east-1
-      NYPL_CORE_S3_BASE_URL: https://s3.amazonaws.com
-      PLATFORM_API_BASE_URL: https://qa-platform.nypl.org/api/v0.1/
-      BUCKET_NAME: sierra-poller-state-qa
-      SIERRA_API_BASE_URL: https://nypl-sierra-test.nypl.org:443/iii/sierra-api
-      SIERRA_VERSION: v6
-      SIERRA_OAUTH_URL: https://nypl-sierra-test.nypl.org:443/iii/sierra-api/v3/token
-      SIERRA_OAUTH_ID: AQECAHh7ea2tyZ6phZgT4B9BDKwguhlFtRC6hgt+7HbmeFsrsgAAAHoweAYJKoZIhvcNAQcGoGswaQIBADBkBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDA6yJkJXvJKEQUcsCAIBEIA3oerpjzhASuO2ZGudbLoo3dCqgPJfcRu2fj1x2an58I9ldyKNArEv5rzJFYasX3FOrnMeqHdYAA==
-      SIERRA_OAUTH_SECRET: AQECAHh7ea2tyZ6phZgT4B9BDKwguhlFtRC6hgt+7HbmeFsrsgAAAHIwcAYJKoZIhvcNAQcGoGMwYQIBADBcBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDLQgrst3U3mqh14f/QIBEIAvR0AVyVvE/sYzsJV2rzFuBslo6xa1nV97F/furZ0V7s7/vZcMQ9gRN1N3B21wDp8=
-      RECORD_TYPE: bibs
-      RECORD_FIELDS: default,fixedFields,varFields,normTitle,normAuthor,orders,locations
-      SCHEMA_TYPE: BibPostRequest
-      KINESIS_STREAM: BibPostRequest-qa
-  access_key_id: "$AWS_ACCESS_KEY_ID_QA"
-  secret_access_key: "$AWS_SECRET_ACCESS_KEY_QA"
-  on:
-    branch: qa
-- provider: lambda
-  function_name: SierraItemUpdatePoller-qa
-  description: A service for polling the Sierra API for updates from the Items
-    endpoint
-  region: us-east-1
-  role: arn:aws:iam::946183545209:role/lambda-full-access
-  runtime: ruby2.7
-  timeout: 60
-  module_name: app
-  handler_name: handle_event
-  event:
-    schedule_expression: rate(5 minutes)
-  environment:
-    variables:
-      LOG_LEVEL: debug
-      S3_AWS_REGION: us-east-1
-      NYPL_CORE_S3_BASE_URL: https://s3.amazonaws.com
-      PLATFORM_API_BASE_URL: https://qa-platform.nypl.org/api/v0.1/
-      BUCKET_NAME: sierra-poller-state-qa
-      SIERRA_API_BASE_URL: https://nypl-sierra-test.nypl.org:443/iii/sierra-api
-      SIERRA_VERSION: v6
-      SIERRA_OAUTH_URL: https://nypl-sierra-test.nypl.org:443/iii/sierra-api/v3/token
-      SIERRA_OAUTH_ID: AQECAHh7ea2tyZ6phZgT4B9BDKwguhlFtRC6hgt+7HbmeFsrsgAAAHoweAYJKoZIhvcNAQcGoGswaQIBADBkBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDA6yJkJXvJKEQUcsCAIBEIA3oerpjzhASuO2ZGudbLoo3dCqgPJfcRu2fj1x2an58I9ldyKNArEv5rzJFYasX3FOrnMeqHdYAA==
-      SIERRA_OAUTH_SECRET: AQECAHh7ea2tyZ6phZgT4B9BDKwguhlFtRC6hgt+7HbmeFsrsgAAAHIwcAYJKoZIhvcNAQcGoGMwYQIBADBcBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDLQgrst3U3mqh14f/QIBEIAvR0AVyVvE/sYzsJV2rzFuBslo6xa1nV97F/furZ0V7s7/vZcMQ9gRN1N3B21wDp8=
-      RECORD_TYPE: items
-      RECORD_FIELDS: default,fixedFields,varFields
-      SCHEMA_TYPE: ItemPostRequest
-      KINESIS_STREAM: ItemPostRequest-qa
-  access_key_id: "$AWS_ACCESS_KEY_ID_QA"
-  secret_access_key: "$AWS_SECRET_ACCESS_KEY_QA"
-  on:
-    branch: qa
-- provider: lambda
-  function_name: SierraHoldingUpdatePoller-production
-  description: A service for polling the Sierra API for updates from the Holdings
-    endpoint
-  region: us-east-1
-  role: arn:aws:iam::946183545209:role/lambda-full-access
-  runtime: ruby2.7
-  timeout: 60
-  module_name: app
-  handler_name: handle_event
-  event:
-    schedule_expression: rate(15 minutes)
-  vpc_config:
-    subnet_ids:
-    - subnet-59bcdd03
-    - subnet-5deecd15
-    security_group_ids:
-    - sg-116eeb60
-  environment:
-    variables:
-      LOG_LEVEL: debug
-      S3_AWS_REGION: us-east-1
-      NYPL_CORE_S3_BASE_URL: https://s3.amazonaws.com
-      PLATFORM_API_BASE_URL: https://platform.nypl.org/api/v0.1/
-      BUCKET_NAME: sierra-poller-state-production
-      SIERRA_API_BASE_URL: https://ilsstaff.nypl.org:443/iii/sierra-api
-      SIERRA_OAUTH_URL: https://ilsstaff.nypl.org:443/iii/sierra-api/v3/token
-      SIERRA_OAUTH_ID: AQECAHh7ea2tyZ6phZgT4B9BDKwguhlFtRC6hgt+7HbmeFsrsgAAAHoweAYJKoZIhvcNAQcGoGswaQIBADBkBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDKwPp4FB9Xx0spVyFwIBEIA34CUI1a5kKePBaRIJ2Wou+KDvCmrh+tDyOSiBbIb3zXo2sbj2UGfwKCdlF2GB0p/UnmQ2ilPwgw==
-      SIERRA_OAUTH_SECRET: AQECAHh7ea2tyZ6phZgT4B9BDKwguhlFtRC6hgt+7HbmeFsrsgAAAIMwgYAGCSqGSIb3DQEHBqBzMHECAQAwbAYJKoZIhvcNAQcBMB4GCWCGSAFlAwQBLjARBAwM8xL3gQb/QIsIWykCARCAP7hsMLN/VeEhZrHsYKQkkdCycujr8Wg5X8zLsrRddPT02UhBGfKWTn10xOIarqUAnu6buZWv6ns2g+pAVtvfWw==
-      SIERRA_VERSION: v6
-      RECORD_TYPE: holdings
-      RECORD_FIELDS: id,bibIds,bibIdLinks,itemIds,itemIdLinks,inheritLocation,allocationRule,accountingUnit,labelCode,serialCode1,serialCode2,serialCode3,serialCode4,claimOnDate,receivingLocationCode,vendorCode,updateCount,pieceCount,eCheckInCode,mediaTypeCode,updatedDate,createdDate,deletedDate,deleted,suppressed,fixedFields,varFields
-      SCHEMA_TYPE: SierraHolding
-      KINESIS_STREAM: SierraHoldingParser-production
-  access_key_id: "$AWS_ACCESS_KEY_ID_PRODUCTION"
-  secret_access_key: "$AWS_SECRET_ACCESS_KEY_PRODUCTION"
-  on:
-    branch: main
-- provider: lambda
-  function_name: SierraBibUpdatePoller-production
-  description: A service for polling the Sierra API for updates from the Bibs
-    endpoint
-  region: us-east-1
-  role: arn:aws:iam::946183545209:role/lambda-full-access
-  runtime: ruby2.7
-  timeout: 60
-  module_name: app
-  handler_name: handle_event
-  event:
-    schedule_expression: rate(1 minute)
-  vpc_config:
-    subnet_ids:
-    - subnet-59bcdd03
-    - subnet-5deecd15
-    security_group_ids:
-    - sg-116eeb60
-  environment:
-    variables:
-      LOG_LEVEL: debug
-      S3_AWS_REGION: us-east-1
-      NYPL_CORE_S3_BASE_URL: https://s3.amazonaws.com
-      PLATFORM_API_BASE_URL: https://platform.nypl.org/api/v0.1/
-      BUCKET_NAME: sierra-poller-state-production
-      SIERRA_API_BASE_URL: https://ilsstaff.nypl.org:443/iii/sierra-api
-      SIERRA_OAUTH_URL: https://ilsstaff.nypl.org:443/iii/sierra-api/v3/token
-      SIERRA_OAUTH_ID: AQECAHh7ea2tyZ6phZgT4B9BDKwguhlFtRC6hgt+7HbmeFsrsgAAAHoweAYJKoZIhvcNAQcGoGswaQIBADBkBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDKwPp4FB9Xx0spVyFwIBEIA34CUI1a5kKePBaRIJ2Wou+KDvCmrh+tDyOSiBbIb3zXo2sbj2UGfwKCdlF2GB0p/UnmQ2ilPwgw==
-      SIERRA_OAUTH_SECRET: AQECAHh7ea2tyZ6phZgT4B9BDKwguhlFtRC6hgt+7HbmeFsrsgAAAIMwgYAGCSqGSIb3DQEHBqBzMHECAQAwbAYJKoZIhvcNAQcBMB4GCWCGSAFlAwQBLjARBAwM8xL3gQb/QIsIWykCARCAP7hsMLN/VeEhZrHsYKQkkdCycujr8Wg5X8zLsrRddPT02UhBGfKWTn10xOIarqUAnu6buZWv6ns2g+pAVtvfWw==
-      SIERRA_VERSION: v6
-      RECORD_TYPE: bibs
-      RECORD_FIELDS: default,fixedFields,varFields,normTitle,normAuthor,orders,locations
-      SCHEMA_TYPE: BibPostRequest
-      KINESIS_STREAM: BibPostRequest-production
-  access_key_id: "$AWS_ACCESS_KEY_ID_PRODUCTION"
-  secret_access_key: "$AWS_SECRET_ACCESS_KEY_PRODUCTION"
-  on:
-    branch: main
-- provider: lambda
-  function_name: SierraItemUpdatePoller-production
-  description: A service for polling the Sierra API for updates from the Items
-    endpoint
-  region: us-east-1
-  role: arn:aws:iam::946183545209:role/lambda-full-access
-  runtime: ruby2.7
-  timeout: 60
-  module_name: app
-  handler_name: handle_event
-  event:
-    schedule_expression: rate(1 minute)
-  vpc_config:
-    subnet_ids:
-    - subnet-59bcdd03
-    - subnet-5deecd15
-    security_group_ids:
-    - sg-116eeb60
-  environment:
-    variables:
-      LOG_LEVEL: debug
-      S3_AWS_REGION: us-east-1
-      NYPL_CORE_S3_BASE_URL: https://s3.amazonaws.com
-      PLATFORM_API_BASE_URL: https://platform.nypl.org/api/v0.1/
-      BUCKET_NAME: sierra-poller-state-production
-      SIERRA_API_BASE_URL: https://ilsstaff.nypl.org:443/iii/sierra-api
-      SIERRA_OAUTH_URL: https://ilsstaff.nypl.org:443/iii/sierra-api/v3/token
-      SIERRA_OAUTH_ID: AQECAHh7ea2tyZ6phZgT4B9BDKwguhlFtRC6hgt+7HbmeFsrsgAAAHoweAYJKoZIhvcNAQcGoGswaQIBADBkBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDKwPp4FB9Xx0spVyFwIBEIA34CUI1a5kKePBaRIJ2Wou+KDvCmrh+tDyOSiBbIb3zXo2sbj2UGfwKCdlF2GB0p/UnmQ2ilPwgw==
-      SIERRA_OAUTH_SECRET: AQECAHh7ea2tyZ6phZgT4B9BDKwguhlFtRC6hgt+7HbmeFsrsgAAAIMwgYAGCSqGSIb3DQEHBqBzMHECAQAwbAYJKoZIhvcNAQcBMB4GCWCGSAFlAwQBLjARBAwM8xL3gQb/QIsIWykCARCAP7hsMLN/VeEhZrHsYKQkkdCycujr8Wg5X8zLsrRddPT02UhBGfKWTn10xOIarqUAnu6buZWv6ns2g+pAVtvfWw==
-      SIERRA_VERSION: v6
-      RECORD_TYPE: items
-      RECORD_FIELDS: default,fixedFields,varFields
-      SCHEMA_TYPE: ItemPostRequest
-      KINESIS_STREAM: ItemPostRequest-production
-  access_key_id: "$AWS_ACCESS_KEY_ID_PRODUCTION"
-  secret_access_key: "$AWS_SECRET_ACCESS_KEY_PRODUCTION"
-  on:
-    branch: main
-after_deploy:
-  - rake set_config
-notifications:
-  email:
-    on_failure: always
+jobs:
+  include:
+  - stage: test
+    script:
+    - rake test
+  - stage: deploy qa
+    if: type IN (push) and branch = qa
+    env:
+    - AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_QA
+    - AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_QA
+    script:
+    - rm -rf vendor
+    - rake run_bundler
+    - terraform -chdir=provisioning/qa/bib_update init -input=false
+    - echo "Deploying Bib Update to qa"
+    - terraform -chdir=provisioning/qa/bib_update apply -auto-approve -input=false
+    #Bib delete
+    - terraform -chdir=provisioning/qa/bib_delete init -input=false
+    - echo "Deploying Bib Delete to qa"
+    - terraform -chdir=provisioning/qa/bib_delete apply -auto-approve -input=false
+    #Item Update
+    - terraform -chdir=provisioning/qa/item_update init -input=false
+    - echo "Deploying Item Update to qa"
+    - terraform -chdir=provisioning/qa/item_update apply -auto-approve -input=false
+    #Item Delete
+    - terraform -chdir=provisioning/qa/item_delete init -input=false
+    - echo "Deploying Item Delete to qa"
+    - terraform -chdir=provisioning/qa/item_delete apply -auto-approve -input=false
+    #Holding Delete
+    - terraform -chdir=provisioning/qa/holding_delete init -input=false
+    - echo "Deploying Holding Delete to qa"
+    - terraform -chdir=provisioning/qa/holding_delete apply -auto-approve -input=false
+    #Holding Update
+    - terraform -chdir=provisioning/qa/holding_update init -input=false
+    - echo "Deploying Holding Update to qa"
+    - terraform -chdir=provisioning/qa/holding_update apply -auto-approve -input=false
+    
+  - stage: deploy production
+    if: type IN (push) and branch = main
+    env:
+    - AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_PRODUCTION
+    - AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_PRODUCTION
+    script:
+    - rm -rf vendor
+    - bundle config set deployment 'true'; bundle config; bundle install --without test
+    - terraform -chdir=provisioning/production/bib_update init -input=false
+    - echo "Deploying Bib Update to production"
+    - terraform -chdir=provisioning/production/bib_update apply -auto-approve -input=false
+    #Bib Delete
+    - terraform -chdir=provisioning/production/bib_delete init -input=false
+    - echo "Deploying Bib Delete to production"
+    - terraform -chdir=provisioning/production/bib_delete apply -auto-approve -input=false
+    #Item Update
+    - terraform -chdir=provisioning/production/item_update init -input=false
+    - echo "Deploying Item Update to production"
+    - terraform -chdir=provisioning/production/item_update apply -auto-approve -input=false
+    #Item Delete
+    - terraform -chdir=provisioning/production/item_delete init -input=false
+    - echo "Deploying Item Delete to production"
+    - terraform -chdir=provisioning/production/item_delete apply -auto-approve -input=false
+    #Holding Delete
+    - terraform -chdir=provisioning/production/holding_delete init -input=false
+    - echo "Deploying Holding Delete to production"
+    - terraform -chdir=provisioning/production/holding_delete apply -auto-approve -input=false
+    #Holding Update
+    - terraform -chdir=provisioning/production/holding_update init -input=false
+    - echo "Deploying Holding Update to production"
+    - terraform -chdir=provisioning/production/holding_update apply -auto-approve -input=false
 env:
   global:
-  - secure: STHw6LScNfsamAXARJBd8r5Rs+yE8hEePWSL6EmBwxeo/3JJiLNk50iyQGGWWWpiXWFvkgLsYK5qEgl+UCheiWIlDUelTRkjliDCS8Ut3q41d886Q3X7XW2XSqcz/RQKR1hlHt4mPmdyeUZ7VMy997+mkYSGgT36hlFeojLht2ZEDQRuPIyWHEM8uLlgCFlsvpg03MTHhf+ijTTv7Sq1G1jYpnRoikVtsUAE0qsJZg25DjUC49bVvxGGbKDqNyc7AtJtm3KoOdMbBs8IBjf8XJNgThjACwtDbO/sVNXkPpFkDfc9sCH+ihvzXDP95v9+LJR0BLV/S+YkXfMKdG5P6+VbKg1mng+LoL91L4HdT4A4FlVVTSHTSbgBDpY46pAheSpaktXYIHJ5xqhX1sJoIDFOQJKmT4+JqmNvgrnoUqYJGw2z1fM1DZV+inO9HG0K3or7/NCUAUaOTszt62OUkB4izIBbkx2wsN+qHuZMfI1/6F6yQ1cBBg4wgIi+fE7GYK6wxlt6GyyFStXG3lmEtYO1HNFSl377V1GBXESTTATxLGDJTM4wJk6g/bhGetXJUIVEWTfdHgIjuHlZuspCy4a3W3qT4xm2XJ+ShOOSgaaT+YSwyFPmMPZFqdD4Tr3Y0n41aw7lwu/gydsqm6rz3W2VMqEwycF2q2gI0lumC9Y=
-  - secure: GW49G5hKs/0y8OAAyx/e/rUYkH9VBVj+rIad1N/rhx/fcKrZPwiooDhCjTbA0mvSBXkGDiMMqB9HsxkIEr+IX2m4RPXLnQwIulP5XIJIu0OVcED6xrRf6RLaFnlXbvArFxNFec1LOQY0Qg8RS/E0wlzhBN4IKGVbcYDEboB10LAxQ70Iathf5wSV9HRdv0eBkdCZKgPG5KLgddKcLBmTRurdNWW3P4KKV5QhofbrveqM8UNvjWkvrHTAknDB2qWB3DZ/Bpix79Yup9zJP4E2xvHSMJ5AXyLbur7dj3oHS4rFt2z+jQeaLg0yAOsFVQkj/dz9T6V0skwk08KqnysnI652ERYEuYtcrc+SATT3fDDobPPdODjI8zTR6JpCJGTO4NmgpH68Zsqu0OOCi7pWTzTpaGRybpI+OT8uc9O5QtAy15HQ4XrfvAA/iPAU6cMS4BYCAq1VFeTFNcsKIXQqqfAbfzoEG+FE+QG3aXUGxLdyX1dLNxdTW8E6lWRre2SZnWtluwInB72yFZb4DRwRCIXZz2hPwvUf1GgWDPpN4OplhFU1SJZ/V3bcptSqF9h9Tn3IxEmkD17KshbEzKdwD8vHGr0u6xhdbXxEmkaJFdvT30C74Lkwnt0qtDU/21hhHbs6IyoNeuB+l82SXQG3D9vvkJ1z4XMTGdD7bS+DdOs=
-  - secure: aBbfEGrbky8BFDcHWgBg9KC/i07ps6m1u6lDBpEC28qcrDHB+5vqaAPJXVXQwM5k7q+mJlR8dDtDewQksDKfnmt34EbalwN3PQCLT7wulnq7DpZwCXNcm/RLMCR7DSaYPfrDQ6B28We0xvH2N9sNBKc4+MN+3M9ZT1QftRHGKZvGpiQq3nVuWWUgR27dktdnClvoKFk3JccMfT3492MEVdD+YzxAuhnGQxjAHRFXHgu9n72mStSmIZvTYIbUqtQ6ngJIF67lfKxPnZ6aNNTXFn1thq1NN2E+vFHaRTFiCJXg495JKikH3+a7Ovb7E0oL68MZqplajCi6jLmbgo0iPsMqU9XTV2QWo5OuHtqfXC/MnELa8peqwPsop1FPz5EFh6T7tUG740IayKSOpbGAHu/bLqPYQ+o/6yIbLJoA5oInAuiGPpOuaBueCO8f1eYoQt4onTyeb1topS+YBdUs+OStXEazbzTYql6xM6oEUY7nU6iDtRJMpbVROVdINufQl1EBnz98iXSMxXluCpZTgD0Z7a0gDiRxHtg0hWn2h2irg/nGuhX5ZvZ6h5Sdcvj8uFRZHuBH1pKQ/0NT3YSYC28j/yKPi+K5kBxBWITXElvMDRlGSslOlvXNlBS7luAYwJVy8hWBDlw/ybXa8kgdygkXjBspmqQEDdRMvhkDipM=
+  - TF_VERSION=1.0.11
+  - secure: Jz/kFHxiRUylGniCEftZk2ILnFD7f4RQgm7c98AtcRyGcjL1ztqfizWQ32Ev7iOS6Q35JvgVJtJhN0dgzin5qa3wwtypCSCPhUEwwJHEt6kxkfJPyOq5PTPmVvtsWNm7oyeUSRQc2KM25P7nLpVP8p0gpd+6liB7Bky9jcNRowAi6ptynrrNFwcY9EB6CHFaTVnpW/GMIH8LWhybjFE1GU69RX/9lFQmMRdQlKfbG4JmuRzhedHsJjvNSGH9L6vn8Wi1rU4BDXEL8KXbGO3SoeLF20Yrer8oKeFGpHJ/MiANMqB0mC1RcYdiAPv2d81irWSkCpUrsnBns/AKagJq1vtZ9EtCmEMmC07yTTQzwDOh8j+P7NTk8Qy8dVFRsHk84nm8joYnuqW/8PwceA5BABpm79woLsUy8Jtmp5WCjMk3+VQ9ex3QWErepRjloBDt7lN9BnHlu3U8y37Kh+7Ejap0owc3bYIL1w26jTf9rO6tPecXii0nF2e+CPIrr9laUwnkn/AZlAgi3ubYbP/wAEaTcn1XOdJ4PcHGl3e06M6NYtU8cNFGcY9K1qEiZeo9j4FEbaD9Zf/rav9u+u2DySuSbJ6DVyg4oftb1O2IEyahCanwPRTZgID4Vxc8lLtVTtNb3ZGTD2Qmb4LoP9PnoC8OyjZ5Mm51jg+UnbkcZpk=

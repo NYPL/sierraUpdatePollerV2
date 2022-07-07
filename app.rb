@@ -13,7 +13,8 @@ def init
     schema_string: ENV["SCHEMA_TYPE"],
     stream_name: ENV["KINESIS_STREAM"],
     partition_key: "id",
-    batch_size: ENV["BATCH_SIZE"] || 25
+    # As of right now, we want to ensure that the sierra request batch size and the kinesis batch sizes are equal in order to avoid losing records in the case of a timeout.
+    batch_size: (ENV["REQUEST_BATCH_SIZE"] || 50).to_i
   })
 
   $logger.debug "Initialized function"
@@ -41,4 +42,3 @@ def handle_event(event:, context:)
 
   $logger.info "Processing Complete"
 end
-
