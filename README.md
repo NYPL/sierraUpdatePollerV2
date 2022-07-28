@@ -74,5 +74,5 @@ Troubleshooting deployments
 In the case that you need to make terraform aware of a lambda resource that was created outside of terraform, for example a Lambda previously created in a Travis Deployment, you can import the existing resource like this:
 
 ```
-terraform -chdir=provisioning/{branch} import module.base.aws_lambda_function.poller_instance Sierra{record_type}UpdatePoller-{branch}
+terraform -chdir=provisioning/{branch}/{record_update/delete} import module.base.aws_lambda_function.poller_lambda Sierra{Record}{Delete?}UpdatePoller-{branch}
 ```
