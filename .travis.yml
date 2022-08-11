@@ -40,10 +40,6 @@ jobs:
     - terraform -chdir=provisioning/qa/item_delete init -input=false
     - echo "Deploying Item Delete to qa"
     - terraform -chdir=provisioning/qa/item_delete apply -auto-approve -input=false
-    #Holding Delete
-    - terraform -chdir=provisioning/qa/holding_delete init -input=false
-    - echo "Deploying Holding Delete to qa"
-    - terraform -chdir=provisioning/qa/holding_delete apply -auto-approve -input=false
     #Holding Update
     - terraform -chdir=provisioning/qa/holding_update init -input=false
     - echo "Deploying Holding Update to qa"
@@ -72,10 +68,6 @@ jobs:
     - terraform -chdir=provisioning/production/item_delete init -input=false
     - echo "Deploying Item Delete to production"
     - terraform -chdir=provisioning/production/item_delete apply -auto-approve -input=false
-    #Holding Delete
-    - terraform -chdir=provisioning/production/holding_delete init -input=false
-    - echo "Deploying Holding Delete to production"
-    - terraform -chdir=provisioning/production/holding_delete apply -auto-approve -input=false
     #Holding Update
     - terraform -chdir=provisioning/production/holding_update init -input=false
     - echo "Deploying Holding Update to production"

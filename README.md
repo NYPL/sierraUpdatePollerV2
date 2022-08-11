@@ -6,6 +6,8 @@
 
 This function polls the Sierra API for updates to the Bib, Holding and Item tables and passes them to a Kinesis stream for further processing. This function is largely a refactoring of the existing [SierraUpdatePoller](https://github.com/NYPL-discovery/sierraupdatepoller) but is somewhat simplified using the knowledge gained there.
 
+Holding records are never deleted so there are no holding delete pollers. 
+
 ## Requirements
 
 - ruby 2.7
