@@ -19,25 +19,22 @@ jobs:
   - stage: test
     script:
     - rake test 
+  - stage: set qa vars
+    if: type IN (push) and branch = travis-2
+    env:
+    - AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_QA
+    - AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_QA
   - stage: deploy qa
   - name: 'rm vendor/run_bundler'
     script:
     - rm -rf vendor
     - rake run_bundler
   - name: "Bib Update QA"
-    if: type IN (push) and branch = travis-2
-    env:
-    - AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_QA
-    - AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_QA
     script:
     - terraform -chdir=provisioning/qa/bib_update init -input=false
     - echo "Deploying Bib Update to qa"
     - terraform -chdir=provisioning/qa/bib_update apply -auto-approve -input=false
   - name: "Bib delete QA"
-    if: type IN (push) and branch = travis-2
-    env:
-    - AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_QA
-    - AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_QA
     script:
     - terraform -chdir=provisioning/qa/bib_delete init -input=false
     - echo "Deploying Bib Delete to qa"
