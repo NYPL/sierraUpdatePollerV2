@@ -24,6 +24,7 @@ jobs:
     env:
     - AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_QA
     - AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_QA
+  - name: "Remove vendor and bundle"
     script:
     - rm -rf vendor
     - rake run_bundler
