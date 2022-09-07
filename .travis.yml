@@ -20,10 +20,6 @@ jobs:
     script:
     - rake test 
   - stage: deploy qa
-    if: type IN (push) and branch = travis-2
-    env:
-    - AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_QA
-    - AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_QA
   - name: 'rm vendor/run_bundler'
     script:
     - rm -rf vendor
