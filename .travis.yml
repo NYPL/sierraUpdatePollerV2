@@ -23,7 +23,7 @@ jobs:
   - name: 'rm vendor/run_bundler'
     script:
     - rm -rf vendor
-    - rake run_bundler
+    - bundle config set deployment 'true'; bundle config; bundle install --without test
   - name: "Bib Update QA"
     if: type IN (push) and branch = travis-2
     env:
