@@ -17,5 +17,5 @@ module "base" {
   environment = "qa"
   deployment_name = "Bib"
   record_env = "bib"
-
+  memory = 512
 }

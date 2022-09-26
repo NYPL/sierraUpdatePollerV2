@@ -20,7 +20,6 @@ jobs:
     script:
     - rake test 
   - stage: deploy qa
-  - name: 'rm vendor/run_bundler'
     script:
     - rm -rf vendor
     - rake run_bundler
@@ -74,7 +73,6 @@ jobs:
     - terraform -chdir=provisioning/qa/holding_update apply -auto-approve -input=false
   
   - stage: deploy production
-  - name: 'rm vendor/run_bundler'
     script:
     - rm -rf vendor
     - bundle config set deployment 'true'; bundle config; bundle install --without test
