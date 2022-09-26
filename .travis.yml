@@ -20,7 +20,7 @@ jobs:
     script:
     - rake test 
   - stage: deploy qa
-    if: type IN (push) and branch = production
+    if: type IN (push) and branch = qa
     script:
     - rm -rf vendor
     - rake run_bundler
