@@ -21,6 +21,8 @@ class SierraManager
       client_id: $kms_client.decrypt(ENV["SIERRA_OAUTH_ID"]),
       client_secret: $kms_client.decrypt(ENV["SIERRA_OAUTH_SECRET"])
     )
+    # This will hold the most recently retrieved Sierra response object:
+    @previous_results = nil
   end
 
   # Fetch records in batches from the Sierra API
@@ -32,8 +34,34 @@ class SierraManager
 
     # Fetch batches of records until no more remain to process
     while @processing
-      results = _fetch_record_batch
-      _parse_result_batch(results)
+      puts "::Starting concurrency on #{@state.start_time}, #{@state.start_offset}"
+
+      threads = []
+      threads << Thread.new do
+        # Save Sierra response object - to process during the next fetch:
+        @previous_results = _fetch_record_batch(@state.start_time, @state.start_offset)
+        _parse_result_batch(@previous_results)
+      end
+      threads << Thread.new { send_results_to_kinesis }
+
+      threads.each { |thr| thr.join }
+      puts "::End concurrency with #{@state.start_time}, #{@state.start_offset} processing=#{@processing}"
+    end
+
+    # Finish by processing the last unsent batch of results:
+    send_results_to_kinesis
+  end
+
+  # If we have any previously retrieved Sierra response object waiting to be
+  # sent to Kinesis, send it:
+  def send_results_to_kinesis
+    unless @previous_results.nil?
+      sierra_batch = SierraBatch.new(@previous_results)
+      sierra_batch.encode_and_send_to_kinesis
+      @previous_results = nil
+
+      # Ensure we record the successes and errors for final validation:
+      _update_processing_counts sierra_batch.process_statuses
     end
   end
 
@@ -56,11 +84,14 @@ class SierraManager
   private
 
   # Fetches an individual record batch from Sierra
-  def _fetch_record_batch
+  def _fetch_record_batch(start_time, offset)
     # Set up the GET request params
-    param_array = [["fields", ENV["RECORD_FIELDS"]], ["offset", @state.start_offset],
-                   [ENV['UPDATE_TYPE'] == 'delete' ? 'deletedDate' : 'updatedDate', "[#{@state.start_time},#{current_time}]"],
-                   ["limit", @@request_batch_size]]
+    param_array = [["fields", ENV["RECORD_FIELDS"]], ["offset", offset],
+            [ENV['UPDATE_TYPE'] == 'delete' ? 'deletedDate' : 'updatedDate', "[#{start_time},#{current_time}]"],
+            ["limit", @@request_batch_size]]
+    # param_array = [["fields", ENV["RECORD_FIELDS"]], ["offset", @state.start_offset],
+    #                [ENV['UPDATE_TYPE'] == 'delete' ? 'deletedDate' : 'updatedDate', "[#{@state.start_time},#{current_time}]"],
+    #                ["limit", @@request_batch_size]]
 
     # Make query against Sierra API
     _query_sierra_api(param_array)
@@ -102,11 +133,13 @@ class SierraManager
     # Extract relevant fields
     sierra_batch = SierraBatch.new(results)
 
+    # Removed for threading:
     # Process records received
-    sierra_batch.encode_and_send_to_kinesis
+    # sierra_batch.encode_and_send_to_kinesis
 
+    # Removed for threading:
     # Update counts of total records processed
-    _update_processing_counts sierra_batch.process_statuses
+    # _update_processing_counts sierra_batch.process_statuses
 
     # If we received fewer records than the maximum per batch this is the last batch
     # and we should set the state to start from this point and exit this invocation
