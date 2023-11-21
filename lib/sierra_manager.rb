@@ -57,7 +57,7 @@ class SierraManager
   def send_results_to_kinesis
     unless @previous_results.nil?
       sierra_batch = SierraBatch.new(@previous_results)
-      sierra_batch.encode_and_send_to_kinesis
+      sierra_batch.encode_and_send_to_kinesis if sierra_batch.has_results?
       @previous_results = nil
 
       # Ensure we record the successes and errors for final validation:
