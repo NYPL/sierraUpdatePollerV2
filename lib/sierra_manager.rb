@@ -34,18 +34,18 @@ class SierraManager
 
     # Fetch batches of records until no more remain to process
     while @processing
-      puts "::Starting concurrency on #{@state.start_time}, #{@state.start_offset}"
-
       threads = []
+
+      # Thread 1: Fetch next set of results:
       threads << Thread.new do
         # Save Sierra response object - to process during the next fetch:
-        @previous_results = _fetch_record_batch(@state.start_time, @state.start_offset)
+        @previous_results = _fetch_record_batch()
         _parse_result_batch(@previous_results)
       end
+      # Thread 2: Encode previously fetcedFetch next set of results:
       threads << Thread.new { send_results_to_kinesis }
 
       threads.each { |thr| thr.join }
-      puts "::End concurrency with #{@state.start_time}, #{@state.start_offset} processing=#{@processing}"
     end
 
     # Finish by processing the last unsent batch of results:
@@ -84,10 +84,10 @@ class SierraManager
   private
 
   # Fetches an individual record batch from Sierra
-  def _fetch_record_batch(start_time, offset)
+  def _fetch_record_batch()
     # Set up the GET request params
-    param_array = [["fields", ENV["RECORD_FIELDS"]], ["offset", offset],
-            [ENV['UPDATE_TYPE'] == 'delete' ? 'deletedDate' : 'updatedDate', "[#{start_time},#{current_time}]"],
+    param_array = [["fields", ENV["RECORD_FIELDS"]], ["offset", @state.start_offset],
+                 [ENV['UPDATE_TYPE'] == 'delete' ? 'deletedDate' : 'updatedDate', "[#{@state.start_time},#{current_time}]"],
             ["limit", @@request_batch_size]]
     # param_array = [["fields", ENV["RECORD_FIELDS"]], ["offset", @state.start_offset],
     #                [ENV['UPDATE_TYPE'] == 'delete' ? 'deletedDate' : 'updatedDate', "[#{@state.start_time},#{current_time}]"],

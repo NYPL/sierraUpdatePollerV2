@@ -33,6 +33,7 @@ This function polls the Sierra API for updates to the Bib, Holding and Item tabl
 - SIERRA_OAUTH_URL: URI for the Sierra API authentication endpoint
 - SIERRA_OAUTH_ID: SENSITIVE, encoded ID for the Sierra API
 - SIERRA_OAUTH_SECRET: SENSITIVE, encoded secret key for the Sierra API
+- SKIP_UPDATING_STATE_FILE: Set to 'true' to skip uploading S3 state file (for local testing)
 
 ## Installation
 

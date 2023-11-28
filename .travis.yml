@@ -29,25 +29,25 @@ jobs:
     - echo "Deploying Bib Update to qa"
     - terraform -chdir=provisioning/qa/bib_update apply -auto-approve -input=false
     #Bib delete
-    # - terraform -chdir=provisioning/qa/bib_delete init -input=false
-    # - echo "Deploying Bib Delete to qa"
-    # - terraform -chdir=provisioning/qa/bib_delete apply -auto-approve -input=false
+    - terraform -chdir=provisioning/qa/bib_delete init -input=false
+    - echo "Deploying Bib Delete to qa"
+    - terraform -chdir=provisioning/qa/bib_delete apply -auto-approve -input=false
     #Item Update
     - terraform -chdir=provisioning/qa/item_update init -input=false
     - echo "Deploying Item Update to qa"
     - terraform -chdir=provisioning/qa/item_update apply -auto-approve -input=false
     #Item Delete
-    # - terraform -chdir=provisioning/qa/item_delete init -input=false
-    # - echo "Deploying Item Delete to qa"
-    # - terraform -chdir=provisioning/qa/item_delete apply -auto-approve -input=false
+    - terraform -chdir=provisioning/qa/item_delete init -input=false
+    - echo "Deploying Item Delete to qa"
+    - terraform -chdir=provisioning/qa/item_delete apply -auto-approve -input=false
     #Holding Delete
-    # - terraform -chdir=provisioning/qa/holding_delete init -input=false
-    # - echo "Deploying Holding Delete to qa"
-    # - terraform -chdir=provisioning/qa/holding_delete apply -auto-approve -input=false
+    - terraform -chdir=provisioning/qa/holding_delete init -input=false
+    - echo "Deploying Holding Delete to qa"
+    - terraform -chdir=provisioning/qa/holding_delete apply -auto-approve -input=false
     #Holding Update
-    # - terraform -chdir=provisioning/qa/holding_update init -input=false
-    # - echo "Deploying Holding Update to qa"
-    # - terraform -chdir=provisioning/qa/holding_update apply -auto-approve -input=false
+    - terraform -chdir=provisioning/qa/holding_update init -input=false
+    - echo "Deploying Holding Update to qa"
+    - terraform -chdir=provisioning/qa/holding_update apply -auto-approve -input=false
     
   - stage: deploy production
     if: type IN (push) and branch = main

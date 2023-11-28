@@ -62,12 +62,17 @@ class StateManager
     # Send object to S3.
     # If this fails the function errors and records are retried from the previous position
     begin
-      resp = @s3.put_object({
-        body: json_body,
-        bucket: ENV["BUCKET_NAME"],
-        key: "#{ENV['S3_KEY'].downcase}_poller_status.json",
-        acl: "public-read"
-      })
+      key = "#{ENV['S3_KEY'].downcase}_poller_status.json"
+      if ENV['SKIP_UPDATING_STATE_FILE'] == 'true'
+        $logger.info "Skipping updating updating #{key} because SKIP_UPDATING_STATE_FILE is enabled"
+      else
+        @s3.put_object({
+          body: json_body,
+          bucket: ENV["BUCKET_NAME"],
+          key: key,
+          acl: "public-read"
+        })
+      end
     rescue Exception => e
       $logger.error "Unable to store current state record in S3", { status: e.message }
       raise S3Error, "Failed to store most recent state record in S3"
