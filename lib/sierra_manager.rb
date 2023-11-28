@@ -84,14 +84,11 @@ class SierraManager
   private
 
   # Fetches an individual record batch from Sierra
-  def _fetch_record_batch()
+  def _fetch_record_batch
     # Set up the GET request params
     param_array = [["fields", ENV["RECORD_FIELDS"]], ["offset", @state.start_offset],
-                 [ENV['UPDATE_TYPE'] == 'delete' ? 'deletedDate' : 'updatedDate', "[#{@state.start_time},#{current_time}]"],
-            ["limit", @@request_batch_size]]
-    # param_array = [["fields", ENV["RECORD_FIELDS"]], ["offset", @state.start_offset],
-    #                [ENV['UPDATE_TYPE'] == 'delete' ? 'deletedDate' : 'updatedDate', "[#{@state.start_time},#{current_time}]"],
-    #                ["limit", @@request_batch_size]]
+                   [ENV['UPDATE_TYPE'] == 'delete' ? 'deletedDate' : 'updatedDate', "[#{@state.start_time},#{current_time}]"],
+                   ["limit", @@request_batch_size]]
 
     # Make query against Sierra API
     _query_sierra_api(param_array)
