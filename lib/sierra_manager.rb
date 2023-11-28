@@ -130,14 +130,6 @@ class SierraManager
     # Extract relevant fields
     sierra_batch = SierraBatch.new(results)
 
-    # Removed for threading:
-    # Process records received
-    # sierra_batch.encode_and_send_to_kinesis
-
-    # Removed for threading:
-    # Update counts of total records processed
-    # _update_processing_counts sierra_batch.process_statuses
-
     # If we received fewer records than the maximum per batch this is the last batch
     # and we should set the state to start from this point and exit this invocation
     # else we should fetch and process the next batch
