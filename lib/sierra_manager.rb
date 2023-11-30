@@ -21,6 +21,8 @@ class SierraManager
       client_id: $kms_client.decrypt(ENV["SIERRA_OAUTH_ID"]),
       client_secret: $kms_client.decrypt(ENV["SIERRA_OAUTH_SECRET"])
     )
+    # This will hold the most recently retrieved Sierra response object:
+    @previous_results = nil
   end
 
   # Fetch records in batches from the Sierra API
@@ -32,8 +34,34 @@ class SierraManager
 
     # Fetch batches of records until no more remain to process
     while @processing
-      results = _fetch_record_batch
-      _parse_result_batch(results)
+      threads = []
+
+      # Thread 1: Fetch next set of results:
+      threads << Thread.new do
+        # Save Sierra response object - to process during the next fetch:
+        @previous_results = _fetch_record_batch()
+        _parse_result_batch(@previous_results)
+      end
+      # Thread 2: Encode previously fetcedFetch next set of results:
+      threads << Thread.new { send_results_to_kinesis }
+
+      threads.each { |thr| thr.join }
+    end
+
+    # Finish by processing the last unsent batch of results:
+    send_results_to_kinesis
+  end
+
+  # If we have any previously retrieved Sierra response object waiting to be
+  # sent to Kinesis, send it:
+  def send_results_to_kinesis
+    unless @previous_results.nil?
+      sierra_batch = SierraBatch.new(@previous_results)
+      sierra_batch.encode_and_send_to_kinesis if sierra_batch.has_results?
+      @previous_results = nil
+
+      # Ensure we record the successes and errors for final validation:
+      _update_processing_counts sierra_batch.process_statuses
     end
   end
 
@@ -101,12 +129,6 @@ class SierraManager
   def _process_batch(results)
     # Extract relevant fields
     sierra_batch = SierraBatch.new(results)
-
-    # Process records received
-    sierra_batch.encode_and_send_to_kinesis
-
-    # Update counts of total records processed
-    _update_processing_counts sierra_batch.process_statuses
 
     # If we received fewer records than the maximum per batch this is the last batch
     # and we should set the state to start from this point and exit this invocation

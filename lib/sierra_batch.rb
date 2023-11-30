@@ -4,11 +4,16 @@ class SierraBatch
   attr_reader :size, :offset, :records, :process_statuses
 
   def initialize(record_response)
+    @is_error = record_response.error?
     @size = record_response.body["total"]
     @offset = record_response.body["start"]
     @records = record_response.body["entries"]
     @process_statuses = { success: 0, error: 0 }
     @retry_count = (ENV["RETRY_COUNT"] || 3).to_i
+  end
+
+  def has_results?
+    !@is_error and @size > 0
   end
 
   def encode_and_send_to_kinesis
