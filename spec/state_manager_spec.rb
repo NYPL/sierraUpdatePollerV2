@@ -6,10 +6,14 @@ describe StateManager do
         @s3_stub = mock()
         Aws::S3::Client.stubs(:new).returns(@s3_stub)
         @test_manager = StateManager.new
+        $logger = mock()
+        $logger.stubs(:debug)
+        $logger.stubs(:error)
     }
 
     after(:each) {
         Aws::S3::Client.unstub(:new)
+        $logger.unstub()
     }
 
     describe '#fetch_current_state' do
@@ -67,7 +71,7 @@ describe StateManager do
                 .with({
                     :body => JSON.dump({:last_execution_time => 'current_time', :last_execution_offset => 'current_offset', :record_type => 'test'}),
                     :bucket => 'test_bucket',
-                    :key => 'test_poller_status.json',
+                    :key => 'sierratest_poller_status.json',
                     :acl => 'public-read'
                 })
             

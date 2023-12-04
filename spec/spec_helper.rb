@@ -15,6 +15,7 @@
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 
 ENV['RECORD_TYPE'] = 'testings'
+ENV['SCHEMA_TYPE'] = 'SierraTest'
 ENV['LOG_LEVEL'] = 'UNKNOWN'
 ENV['KINESIS_STREAM'] = 'test_stream'
 ENV['NYPL_CORE_S3_BASE_URL'] = 'http://test.com'
@@ -22,8 +23,9 @@ ENV['BUCKET_NAME'] = 'test_bucket'
 ENV['RECORD_TYPE'] = 'test'
 ENV['RECORD_FIELDS'] = 'test_fields'
 ENV['SIERRA_VERSION'] = 'v0'
-
-
+ENV['RETRY_COUNT'] = '3'
+ENV['S3_KEY'] = 'SierraTest'
+ENV['REQUEST_BATCH_SIZE'] = '100'
 
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate
