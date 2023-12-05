@@ -57,3 +57,17 @@ Resources:
           S3_KEY: BibPostRequest
           SCHEMA_TYPE: BibPostRequest
           SKIP_UPDATING_STATE_FILE: true
+  SierraHoldingUpdateDeletePoller:
+    Type: AWS::Serverless::Function
+    Properties:
+      Environment:
+        Variables:
+          RECORD_TYPE: holdings
+          RECORD_FIELDS: id,bibIds,bibIdLinks,itemIds,itemIdLinks,inheritLocation,allocationRule,accountingUnit,labelCode,serialCode1,serialCode2,serialCode3,serialCode4,claimOnDate,receivingLocationCode,vendorCode,updateCount,pieceCount,eCheckInCode,mediaTypeCode,updatedDate,createdDate,deletedDate,deleted,suppressed,fixedFields,varFields
+          SCHEMA_TYPE: SierraHolding
+          S3_KEY: HoldingDelete
+          KINESIS_STREAM: SierraHoldingParser-qa
+          UPDATE_TYPE: delete
+          SKIP_UPDATING_STATE_FILE: true
+          SIERRA_OAUTH_ID: AQECAHh7ea2tyZ6phZgT4B9BDKwguhlFtRC6hgt+7HbmeFsrsgAAAHoweAYJKoZIhvcNAQcGoGswaQIBADBkBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDKwPp4FB9Xx0spVyFwIBEIA34CUI1a5kKePBaRIJ2Wou+KDvCmrh+tDyOSiBbIb3zXo2sbj2UGfwKCdlF2GB0p/UnmQ2ilPwgw==
+          SIERRA_OAUTH_SECRET: AQECAHh7ea2tyZ6phZgT4B9BDKwguhlFtRC6hgt+7HbmeFsrsgAAAIMwgYAGCSqGSIb3DQEHBqBzMHECAQAwbAYJKoZIhvcNAQcBMB4GCWCGSAFlAwQBLjARBAwM8xL3gQb/QIsIWykCARCAP7hsMLN/VeEhZrHsYKQkkdCycujr8Wg5X8zLsrRddPT02UhBGfKWTn10xOIarqUAnu6buZWv6ns2g+pAVtvfWw==
