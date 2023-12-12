@@ -59,7 +59,7 @@ Testing is provided via `rspec` with `mocha` for stubbing/mocking. The test suit
 
 ## Contributing
 
-1. Cut a feature branch off of develoment
+1. Cut a feature branch off of development
 2. Commit changes to your feature branch
 3. File a pull request against devlopment and assign a reviewer
 4. After the PR is accepted, merge into development

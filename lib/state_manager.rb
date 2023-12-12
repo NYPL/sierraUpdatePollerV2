@@ -74,8 +74,8 @@ class StateManager
         })
       end
     rescue Exception => e
-      $logger.error "Unable to store current state record in S3", { status: e.message }
-      raise S3Error, "Failed to store most recent state record in S3"
+      $logger.error "Unable to store current state record in S3", { :status => e.message }
+      raise S3Error.new("Failed to store most recent state record in S3")
     end
 
     # Set new state for use in processing subsequent batches within this invocation

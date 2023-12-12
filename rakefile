@@ -1,5 +1,4 @@
 # Basic utility commands to make working with SAM and AWS Lambda more friendly
-require_relative "rake_helper"
 
 desc "Run test suite"
 task :test do
