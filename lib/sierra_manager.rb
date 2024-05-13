@@ -57,6 +57,7 @@ class SierraManager
   def send_results_to_kinesis
     unless @previous_results.nil?
       sierra_batch = SierraBatch.new(@previous_results)
+      puts "Send to kinesis? #{ENV["DRYRUN"].nil?}"
       sierra_batch.encode_and_send_to_kinesis if sierra_batch.has_results?
       @previous_results = nil
 
@@ -87,7 +88,8 @@ class SierraManager
   def _fetch_record_batch
     # Set up the GET request params
     param_array = [["fields", ENV["RECORD_FIELDS"]], ["offset", @state.start_offset],
-                   [ENV['UPDATE_TYPE'] == 'delete' ? 'deletedDate' : 'updatedDate', "[#{@state.start_time},#{current_time}]"],
+                   # [ENV['UPDATE_TYPE'] == 'delete' ? 'deletedDate' : 'updatedDate', "[#{@state.start_time},#{current_time}]"],
+                   [ENV['UPDATE_TYPE'] == 'delete' ? 'deletedDate' : 'updatedDate', "[#{@state.start_time},#{@state.end_time}]"],
                    ["limit", @@request_batch_size]]
 
     # Make query against Sierra API
@@ -133,10 +135,12 @@ class SierraManager
     # If we received fewer records than the maximum per batch this is the last batch
     # and we should set the state to start from this point and exit this invocation
     # else we should fetch and process the next batch
+    puts " #{sierra_batch.size} >= #{@@request_batch_size} so "
     if sierra_batch.size < @@request_batch_size
       @state.set_current_state(current_time, 0)
       @processing = false
     else
+      puts "@state.set_current_state(#{@state.start_time}, #{@state.start_offset} + #{@@request_batch_size})"
       @state.set_current_state(@state.start_time, @state.start_offset + @@request_batch_size)
     end
   end

@@ -56,7 +56,9 @@ class SierraBatch
     end
 
     def encode_and_send_to_kinesis
-      $kinesis_client << @record
+      if ENV["DRYRUN"].nil?
+        $kinesis_client << @record
+      end
     end
   end
 end
