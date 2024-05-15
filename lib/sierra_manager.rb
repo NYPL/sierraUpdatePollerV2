@@ -36,7 +36,7 @@ class SierraManager
     while @processing
       threads = []
 
-      # Thread 1: Encode previously fetcedFetch next set of results:
+      # Thread 1: Encode previously fetched results:
       threads << Thread.new { send_results_to_kinesis }
       # Thread 2: Fetch next set of results:
       threads << Thread.new do
