@@ -91,6 +91,8 @@ class SierraManager
 
   private
 
+  # Returns the relevant end_time for this job (either the manual end_time or
+  # the "current_time" recorded at the start)
   def end_time
     @state.is_a?(ManualJobStateManager) ? @state.end_time : current_time
   end
@@ -99,7 +101,6 @@ class SierraManager
   def _fetch_record_batch
     # Set up the GET request params
     param_array = [["fields", ENV["RECORD_FIELDS"]], ["offset", @state.start_offset],
-                   # [ENV['UPDATE_TYPE'] == 'delete' ? 'deletedDate' : 'updatedDate', "[#{@state.start_time},#{current_time}]"],
                    [ENV['UPDATE_TYPE'] == 'delete' ? 'deletedDate' : 'updatedDate', "[#{@state.start_time},#{end_time}]"],
                    ["limit", @@request_batch_size]]
 
