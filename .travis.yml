@@ -6,7 +6,6 @@ before_install:
 - unzip terraform_"$TF_VERSION"_linux_amd64.zip
 - sudo mv terraform /usr/local/bin/
 - rm terraform_"$TF_VERSION"_linux_amd64.zip
-- gem update --system
 - gem install bundler
 - gem install aws-sdk-lambda
 - gem install aws-sdk-cloudwatchevents
