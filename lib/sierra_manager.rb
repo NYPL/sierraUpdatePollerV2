@@ -30,7 +30,7 @@ class SierraManager
   def fetch_updated_records
     # This sets the end fetch time for the current invocation and will be the start_time for the next invocation
     @current_time = DateTime.now
-    $logger.info "Setting fetch (end) time to #{current_time}"
+    $logger.info "Beginning Sierra fetch: #{@state.start_time} - #{end_time}"
 
     # Fetch batches of records until no more remain to process
     while @processing
@@ -68,6 +68,8 @@ class SierraManager
 
       # Ensure we record the successes and errors for final validation:
       _update_processing_counts sierra_batch.process_statuses
+
+      $logger.info "Collected and sent #{@records_processed[:success]} records so far for #{@state.start_time} - #{end_time}"
     end
   end
 
@@ -89,9 +91,12 @@ class SierraManager
 
   private
 
+  def end_time
+    @state.is_a?(ManualJobStateManager) ? @state.end_time : current_time
+  end
+
   # Fetches an individual record batch from Sierra
   def _fetch_record_batch
-    end_time = @state.is_a?(ManualJobStateManager) ? @state.end_time : current_time
     # Set up the GET request params
     param_array = [["fields", ENV["RECORD_FIELDS"]], ["offset", @state.start_offset],
                    # [ENV['UPDATE_TYPE'] == 'delete' ? 'deletedDate' : 'updatedDate', "[#{@state.start_time},#{current_time}]"],
