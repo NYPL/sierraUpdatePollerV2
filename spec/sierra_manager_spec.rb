@@ -5,7 +5,6 @@ describe SierraManager do
     before(:each) {
         mock_state = mock()
         mock_state.stubs(:start_time).returns('start_time')
-        mock_state.stubs(:end_time).returns('end_time')
         mock_state.stubs(:start_offset).returns(0)
         sierra_stub = mock()
         NYPLRubyUtil::SierraApiClient.stubs(:new).returns(sierra_stub)
@@ -120,8 +119,9 @@ describe SierraManager do
 
     describe '#_fetch_record_batch' do
         it 'should query the Sierra API with the current querry settings' do
+            @test_manager.stubs(:current_time).returns('fake-time')
             @test_manager.stubs(:_query_sierra_api)
-                .with([['fields', 'test_fields'], ['offset', 0], ['updatedDate', '[start_time,end_time]'], ['limit', 100]])
+                .with([['fields', 'test_fields'], ['offset', 0], ['updatedDate', '[start_time,fake-time]'], ['limit', 100]])
 
             @test_manager.send(:_fetch_record_batch)
         end
@@ -133,8 +133,9 @@ describe SierraManager do
         end
 
         it 'should query the Sierra API with the current querry settings' do
+            @test_manager.stubs(:current_time).returns('fake-time')
             @test_manager.stubs(:_query_sierra_api)
-                .with([['fields', 'test_fields'], ['offset', 0], ['deletedDate', '[start_time,end_time]'], ['limit', 100]])
+                .with([['fields', 'test_fields'], ['offset', 0], ['deletedDate', '[start_time,fake-time]'], ['limit', 100]])
 
             @test_manager.send(:_fetch_record_batch)
         end
