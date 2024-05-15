@@ -91,10 +91,11 @@ class SierraManager
 
   # Fetches an individual record batch from Sierra
   def _fetch_record_batch
+    end_time = @state.is_a?(ManualJobStateManager) ? @state.end_time : current_time
     # Set up the GET request params
     param_array = [["fields", ENV["RECORD_FIELDS"]], ["offset", @state.start_offset],
                    # [ENV['UPDATE_TYPE'] == 'delete' ? 'deletedDate' : 'updatedDate', "[#{@state.start_time},#{current_time}]"],
-                   [ENV['UPDATE_TYPE'] == 'delete' ? 'deletedDate' : 'updatedDate', "[#{@state.start_time},#{@state.end_time}]"],
+                   [ENV['UPDATE_TYPE'] == 'delete' ? 'deletedDate' : 'updatedDate', "[#{@state.start_time},#{end_time}]"],
                    ["limit", @@request_batch_size]]
 
     # Make query against Sierra API
