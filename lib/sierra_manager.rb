@@ -21,8 +21,8 @@ class SierraManager
       client_id: $kms_client.decrypt(ENV["SIERRA_OAUTH_ID"]),
       client_secret: $kms_client.decrypt(ENV["SIERRA_OAUTH_SECRET"])
     )
-    # This will hold the most recently retrieved Sierra response object:
-    @previous_results = nil
+    # This will hold the most recently retrieved Sierra response objects:
+    @previous_results = []
   end
 
   # Fetch records in batches from the Sierra API
@@ -36,14 +36,19 @@ class SierraManager
     while @processing
       threads = []
 
-      # Thread 1: Fetch next set of results:
-      threads << Thread.new do
-        # Save Sierra response object - to process during the next fetch:
-        @previous_results = _fetch_record_batch()
-        _parse_result_batch(@previous_results)
-      end
-      # Thread 2: Encode previously fetcedFetch next set of results:
+      # Thread 1: Encode previously fetcedFetch next set of results:
       threads << Thread.new { send_results_to_kinesis }
+      # Thread 2: Fetch next set of results:
+      threads << Thread.new do
+        # Fetch next set of records from Sierra:
+        batch = _fetch_record_batch()
+
+        # Update state file based on what was received:
+        _parse_result_batch(batch)
+
+        # Save response object to process during the next fetch:
+        @previous_results << batch
+      end
 
       threads.each { |thr| thr.join }
     end
@@ -55,11 +60,11 @@ class SierraManager
   # If we have any previously retrieved Sierra response object waiting to be
   # sent to Kinesis, send it:
   def send_results_to_kinesis
-    unless @previous_results.nil?
-      sierra_batch = SierraBatch.new(@previous_results)
-      puts "Send to kinesis? #{ENV["DRYRUN"].nil?}"
+    # @previous_results will be empty on the first run (before the first set of
+    # results have been received):
+    unless @previous_results.empty?
+      sierra_batch = SierraBatch.new(@previous_results.shift)
       sierra_batch.encode_and_send_to_kinesis if sierra_batch.has_results?
-      @previous_results = nil
 
       # Ensure we record the successes and errors for final validation:
       _update_processing_counts sierra_batch.process_statuses
@@ -135,12 +140,10 @@ class SierraManager
     # If we received fewer records than the maximum per batch this is the last batch
     # and we should set the state to start from this point and exit this invocation
     # else we should fetch and process the next batch
-    puts " #{sierra_batch.size} >= #{@@request_batch_size} so "
     if sierra_batch.size < @@request_batch_size
       @state.set_current_state(current_time, 0)
       @processing = false
     else
-      puts "@state.set_current_state(#{@state.start_time}, #{@state.start_offset} + #{@@request_batch_size})"
       @state.set_current_state(@state.start_time, @state.start_offset + @@request_batch_size)
     end
   end
