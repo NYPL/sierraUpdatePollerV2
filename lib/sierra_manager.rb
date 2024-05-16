@@ -30,7 +30,8 @@ class SierraManager
   def fetch_updated_records
     # This sets the end fetch time for the current invocation and will be the start_time for the next invocation
     @current_time = DateTime.now
-    $logger.info "Beginning Sierra fetch: #{@state.start_time} - #{end_time}"
+    @job_start_time = @state.start_time
+    $logger.info "Beginning Sierra fetch: #{@job_start_time} - #{end_time}"
 
     # Fetch batches of records until no more remain to process
     while @processing
@@ -69,7 +70,7 @@ class SierraManager
       # Ensure we record the successes and errors for final validation:
       _update_processing_counts sierra_batch.process_statuses
 
-      $logger.info "Collected and sent #{@records_processed[:success]} records so far for #{@state.start_time} - #{end_time}"
+      $logger.info "Collected and sent #{@records_processed[:success]} records so far for #{@job_start_time} - #{end_time}"
     end
   end
 
@@ -124,13 +125,13 @@ class SierraManager
   def _query_sierra_api(param_array)
     # Encode request params
     param_str = URI.encode_www_form(param_array)
-    start_time = Time.now
+    _start_time = Time.now
     $logger.debug("Querying Sierra API with params #{param_str}")
 
     # Execute request and handle errors
     begin
       result = @sierra_client.get("/#{ENV['SIERRA_VERSION']}/#{ENV['RECORD_TYPE']}?#{param_str}")
-      $logger.info("Received Sierra response in #{Time.now - start_time} seconds")
+      $logger.info("Received Sierra response in #{Time.now - _start_time} seconds")
     rescue Exception => e
       $logger.error("Failed to query Sierra API", { status: e.message })
       raise SierraError, "Received error from Sierra API. Review logs"
