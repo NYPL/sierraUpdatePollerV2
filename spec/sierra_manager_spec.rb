@@ -70,6 +70,37 @@ describe SierraManager do
             @test_manager.fetch_updated_records
             expect(@test_manager.processing).to eq(false)
         end
+
+        it 'should send previously fetched batch to kinesis even if kinesis is slow' do
+            DateTime.stubs(:now).returns('current_time')
+
+            # Expect SierraBatch.encode_and_send_to_kinesis called twice
+            mock_batch = mock()
+            mock_batch.stubs(:encode_and_send_to_kinesis).twice.with do
+              sleep 1
+            end
+            mock_batch.stubs(:has_results?).twice.returns(true)
+            mock_batch.stubs(:process_statuses).returns({ success: 1, error: 0 })
+
+            # Expect two SierraBatch instances created around the two results:
+            SierraBatch.stubs(:new).with('result1').returns(mock_batch)
+            SierraBatch.stubs(:new).with('result2').returns(mock_batch)
+
+            @test_manager.stubs(:_fetch_record_batch).returns('result1', 'result2')
+
+            @test_manager.stubs(:_parse_result_batch).with() do |value|
+                if value == 'result2'
+                    @test_manager.processing = false
+                end
+                true
+            end
+
+            expect(@test_manager.processing).to eq(true)
+            @test_manager.fetch_updated_records
+            expect(@test_manager.processing).to eq(false)
+
+            expect(@test_manager.records_processed).to eq({ success: 2, error: 0 })
+        end
     end
 
     describe '#validate_processing' do
@@ -88,8 +119,9 @@ describe SierraManager do
 
     describe '#_fetch_record_batch' do
         it 'should query the Sierra API with the current querry settings' do
+            @test_manager.stubs(:current_time).returns('fake-time')
             @test_manager.stubs(:_query_sierra_api)
-                .with([['fields', 'test_fields'], ['offset', 0], ['updatedDate', '[start_time,]'], ['limit', 100]])
+                .with([['fields', 'test_fields'], ['offset', 0], ['updatedDate', '[start_time,fake-time]'], ['limit', 100]])
 
             @test_manager.send(:_fetch_record_batch)
         end
@@ -101,8 +133,9 @@ describe SierraManager do
         end
 
         it 'should query the Sierra API with the current querry settings' do
+            @test_manager.stubs(:current_time).returns('fake-time')
             @test_manager.stubs(:_query_sierra_api)
-                .with([['fields', 'test_fields'], ['offset', 0], ['deletedDate', '[start_time,]'], ['limit', 100]])
+                .with([['fields', 'test_fields'], ['offset', 0], ['deletedDate', '[start_time,fake-time]'], ['limit', 100]])
 
             @test_manager.send(:_fetch_record_batch)
         end
