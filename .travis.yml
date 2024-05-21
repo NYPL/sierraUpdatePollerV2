@@ -6,25 +6,22 @@ before_install:
 - unzip terraform_"$TF_VERSION"_linux_amd64.zip
 - sudo mv terraform /usr/local/bin/
 - rm terraform_"$TF_VERSION"_linux_amd64.zip
-- gem update --system
-- gem install bundler
-- gem install aws-sdk-lambda
-- gem install aws-sdk-cloudwatchevents
+- gem install bundler -v 2.4.22
 install:
 - rake run_bundler
 jobs:
   allow_failures:
-    - rvm: 2.7.0
+  - rvm: 2.7.0
   include:
   - stage: test
     script:
-    - rake test 
+    - rake test
   - stage: deploy qa
     if: type IN (push) and branch = qa
     script:
     - rm -rf vendor
     - rake run_bundler
-  - name: "Bib Update QA"
+  - name: Bib Update QA
     if: type IN (push) and branch = qa
     env:
     - AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_QA
@@ -32,7 +29,7 @@ jobs:
     script:
     - terraform -chdir=provisioning/qa/bib_update init -input=false
     - terraform -chdir=provisioning/qa/bib_update apply -auto-approve -input=false
-  - name: "Bib delete QA"
+  - name: Bib delete QA
     if: type IN (push) and branch = qa
     env:
     - AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_QA
@@ -40,7 +37,7 @@ jobs:
     script:
     - terraform -chdir=provisioning/qa/bib_delete init -input=false
     - terraform -chdir=provisioning/qa/bib_delete apply -auto-approve -input=false
-  - name: "Item delete QA"
+  - name: Item delete QA
     if: type IN (push) and branch = qa
     env:
     - AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_QA
@@ -48,7 +45,7 @@ jobs:
     script:
     - terraform -chdir=provisioning/qa/item_delete init -input=false
     - terraform -chdir=provisioning/qa/item_delete apply -auto-approve -input=false
-  - name: "Item update QA"
+  - name: Item update QA
     if: type IN (push) and branch = qa
     env:
     - AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_QA
@@ -56,7 +53,7 @@ jobs:
     script:
     - terraform -chdir=provisioning/qa/item_update init -input=false
     - terraform -chdir=provisioning/qa/item_update apply -auto-approve -input=false
-  - name: "Holding delete QA"
+  - name: Holding delete QA
     if: type IN (push) and branch = qa
     env:
     - AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_QA
@@ -64,7 +61,7 @@ jobs:
     script:
     - terraform -chdir=provisioning/qa/holding_delete init -input=false
     - terraform -chdir=provisioning/qa/holding_delete apply -auto-approve -input=false
-  - name: "Holding update QA"
+  - name: Holding update QA
     if: type IN (push) and branch = qa
     env:
     - AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_QA
@@ -76,8 +73,9 @@ jobs:
     if: type IN (push) and branch = production
     script:
     - rm -rf vendor
-    - bundle config set deployment 'true'; bundle config; bundle install --without test
-  - name: "Bib Update production"
+    - bundle config set deployment 'true'; bundle config; bundle install --without
+      test
+  - name: Bib Update production
     if: type IN (push) and branch = production
     env:
     - AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_PRODUCTION
@@ -85,7 +83,7 @@ jobs:
     script:
     - terraform -chdir=provisioning/production/bib_update init -input=false
     - terraform -chdir=provisioning/production/bib_update apply -auto-approve -input=false
-  - name: "Bib delete production"
+  - name: Bib delete production
     if: type IN (push) and branch = production
     env:
     - AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_PRODUCTION
@@ -93,7 +91,7 @@ jobs:
     script:
     - terraform -chdir=provisioning/production/bib_delete init -input=false
     - terraform -chdir=provisioning/production/bib_delete apply -auto-approve -input=false
-  - name: "Item delete production"
+  - name: Item delete production
     if: type IN (push) and branch = production
     env:
     - AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_PRODUCTION
@@ -101,7 +99,7 @@ jobs:
     script:
     - terraform -chdir=provisioning/production/item_delete init -input=false
     - terraform -chdir=provisioning/production/item_delete apply -auto-approve -input=false
-  - name: "Item update production"
+  - name: Item update production
     if: type IN (push) and branch = production
     env:
     - AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_PRODUCTION
@@ -109,23 +107,25 @@ jobs:
     script:
     - terraform -chdir=provisioning/production/item_update init -input=false
     - terraform -chdir=provisioning/production/item_update apply -auto-approve -input=false
-  - name: "Holding delete production"
+  - name: Holding delete production
     if: type IN (push) and branch = production
     env:
     - AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_PRODUCTION
     - AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_PRODUCTION
     script:
     - terraform -chdir=provisioning/production/holding_delete init -input=false
-    - terraform -chdir=provisioning/production/holding_delete apply -auto-approve -input=false
-  - name: "Holding update production"
+    - terraform -chdir=provisioning/production/holding_delete apply -auto-approve
+      -input=false
+  - name: Holding update production
     if: type IN (push) and branch = production
     env:
     - AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_PRODUCTION
     - AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_PRODUCTION
     script:
     - terraform -chdir=provisioning/production/holding_update init -input=false
-    - terraform -chdir=provisioning/production/holding_update apply -auto-approve -input=false
+    - terraform -chdir=provisioning/production/holding_update apply -auto-approve
+      -input=false
 env:
   global:
   - TF_VERSION=1.0.11
-  - secure: Jz/kFHxiRUylGniCEftZk2ILnFD7f4RQgm7c98AtcRyGcjL1ztqfizWQ32Ev7iOS6Q35JvgVJtJhN0dgzin5qa3wwtypCSCPhUEwwJHEt6kxkfJPyOq5PTPmVvtsWNm7oyeUSRQc2KM25P7nLpVP8p0gpd+6liB7Bky9jcNRowAi6ptynrrNFwcY9EB6CHFaTVnpW/GMIH8LWhybjFE1GU69RX/9lFQmMRdQlKfbG4JmuRzhedHsJjvNSGH9L6vn8Wi1rU4BDXEL8KXbGO3SoeLF20Yrer8oKeFGpHJ/MiANMqB0mC1RcYdiAPv2d81irWSkCpUrsnBns/AKagJq1vtZ9EtCmEMmC07yTTQzwDOh8j+P7NTk8Qy8dVFRsHk84nm8joYnuqW/8PwceA5BABpm79woLsUy8Jtmp5WCjMk3+VQ9ex3QWErepRjloBDt7lN9BnHlu3U8y37Kh+7Ejap0owc3bYIL1w26jTf9rO6tPecXii0nF2e+CPIrr9laUwnkn/AZlAgi3ubYbP/wAEaTcn1XOdJ4PcHGl3e06M6NYtU8cNFGcY9K1qEiZeo9j4FEbaD9Zf/rav9u+u2DySuSbJ6DVyg4oftb1O2IEyahCanwPRTZgID4Vxc8lLtVTtNb3ZGTD2Qmb4LoP9PnoC8OyjZ5Mm51jg+UnbkcZpk=
+  - secure: TthOJoVA7FDpbqVPByRi5eKZcglGR2pHblWJoY4ELNs7wBlFjB9nj1nRnRydCs9g+hA2HZ26zeotsZjwlBuU0pqPjcfKDyt21PYt+x7kcDdNK5LU599Hsx/pggrJ6vKnIor+Iee5bLUFrxU9k1IszjMcKQ83E/2MALtdplikz7EWINCjLs4vk/ld46UezI/LVZYgwdUBZl3zGOzf0UDrMphHnsFL78mSxJTCCJhWVeEI0VSQGR3C844KmzylGe8om1Gw+2XzHCmlQbvdlEKQuHmovnl2bo3Fyvd7PKeoxAlcQ1ylIvAuzppllPD81V6oAKYayfKhn4pefQhSv4Mv1gYnibMZGCTjQb0B8lipR8yCruWcuf9uWdZU7PdunZYXxB5t0gneIEqy6ln3Z7FOGWGBHW1LHNZIPfkj3VSpWbBblDwFhhPH9qDulLqA7fdKwLu7dEy21PCy6hZw5XL3OKoEblHc1ruLxzvkh/HkKsCO9jOvyJTgV9O0ki8GlYpuCFfeV1IFV3lm6HjoZkb6mEGhEmalpllxJMqAIJrNbza1BzkqZ0ykLWNKUn47/KGcDhe/wlYHtAPFGhfmfy8KCdK90HYL+3TPXvKiKD9/sZll6tcWPY/tGNTSO/Ama/JIKa1n5PoD51e0RLHcXkpV4zTFeBKzH8oNOZgtmOoBZfE=

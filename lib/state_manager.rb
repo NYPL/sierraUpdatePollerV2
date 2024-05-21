@@ -50,7 +50,7 @@ class StateManager
 
   # Set new state values for execution time and offset. Invoked upon succesful parsing of a batch
   def set_current_state(execution_time, execution_offset)
-    $logger.debug "Setting state from last fetch execution EXECUTION_TIME: #{execution_time}, EXECUTION_OFFSET: #{execution_offset}"
+    $logger.debug "Updating S3 state file EXECUTION_TIME: #{execution_time}, EXECUTION_OFFSET: #{execution_offset}"
 
     # Create a JSON object
     json_body = JSON.dump({

@@ -35,7 +35,6 @@ def handle_event(event:, context:)
   end
 
   # Load records given current starting position in state
-  $logger.info "Fetching information from Sierra API"
   sierra = SierraManager.new(state)
   sierra.fetch_updated_records
   sierra.validate_processing
