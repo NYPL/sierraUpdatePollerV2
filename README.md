@@ -33,6 +33,7 @@ This function polls the Sierra API for updates to the Bib, Holding and Item tabl
 - SIERRA_OAUTH_URL: URI for the Sierra API authentication endpoint
 - SIERRA_OAUTH_ID: SENSITIVE, encoded ID for the Sierra API
 - SIERRA_OAUTH_SECRET: SENSITIVE, encoded secret key for the Sierra API
+- SKIP_UPDATING_STATE_FILE: Set to 'true' to skip uploading S3 state file (for local testing)
 
 ## Installation
 
@@ -58,7 +59,7 @@ Testing is provided via `rspec` with `mocha` for stubbing/mocking. The test suit
 
 ## Contributing
 
-1. Cut a feature branch off of develomenth
+1. Cut a feature branch off of development
 2. Commit changes to your feature branch
 3. File a pull request against devlopment and assign a reviewer
 4. After the PR is accepted, merge into development
@@ -74,5 +75,5 @@ Troubleshooting deployments
 In the case that you need to make terraform aware of a lambda resource that was created outside of terraform, for example a Lambda previously created in a Travis Deployment, you can import the existing resource like this:
 
 ```
-terraform -chdir=provisioning/{branch} import module.base.aws_lambda_function.poller_instance Sierra{record_type}UpdatePoller-{branch}
+terraform -chdir=provisioning/{branch}/{record_update/delete} import module.base.aws_lambda_function.poller_lambda Sierra{Record}{Delete?}UpdatePoller-{branch}
 ```

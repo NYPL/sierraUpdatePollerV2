@@ -9,6 +9,8 @@ describe SierraBatch do
       "start" => 0,
       "entries" => (1..50).to_a.map { |x| { "id" => x } }.compact
     })
+    mock_response.stubs(:error?).returns(false)
+
     @test_batch = SierraBatch.new(mock_response)
     $kinesis_client = mock
     @failed_records = mock

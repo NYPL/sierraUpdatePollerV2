@@ -13,6 +13,17 @@ variable "environment" {
   }
 }
 
+variable "memory" {
+  type        = number
+  default     = 128
+  description = "The amount of memory to allocate. Default 128M"
+
+  validation {
+    condition     = var.memory >= 128
+    error_message = "The memory allocation must be at least 128."
+  }
+}
+
 variable "deployment_name" {
   type = string
   description = "The name of the deployment. This controls the name of the lambda and the s3 bucket."
@@ -45,7 +56,7 @@ resource "aws_lambda_function" "poller_lambda" {
   description                    = "A service for polling the Sierra API for updates from the Bibs endpoint"
   function_name                  = "Sierra${var.deployment_name}UpdatePoller-${var.environment}"
   handler                        = "app.handle_event"
-  memory_size                    = 128
+  memory_size                    = var.memory
   role                           = "arn:aws:iam::946183545209:role/lambda-full-access"
   runtime                        = "ruby2.7"
   reserved_concurrent_executions = 1

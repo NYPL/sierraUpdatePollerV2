@@ -17,4 +17,5 @@ module "base" {
   environment = "production"
   deployment_name = "Bib"
   record_env = "bib"
+  memory = 512
 }

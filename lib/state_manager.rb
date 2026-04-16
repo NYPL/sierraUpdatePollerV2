@@ -50,7 +50,7 @@ class StateManager
 
   # Set new state values for execution time and offset. Invoked upon succesful parsing of a batch
   def set_current_state(execution_time, execution_offset)
-    $logger.debug "Setting state from last fetch execution EXECUTION_TIME: #{execution_time}, EXECUTION_OFFSET: #{execution_offset}"
+    $logger.debug "Updating S3 state file EXECUTION_TIME: #{execution_time}, EXECUTION_OFFSET: #{execution_offset}"
 
     # Create a JSON object
     json_body = JSON.dump({
@@ -62,15 +62,20 @@ class StateManager
     # Send object to S3.
     # If this fails the function errors and records are retried from the previous position
     begin
-      resp = @s3.put_object({
-        body: json_body,
-        bucket: ENV["BUCKET_NAME"],
-        key: "#{ENV['S3_KEY'].downcase}_poller_status.json",
-        acl: "public-read"
-      })
+      key = "#{ENV['S3_KEY'].downcase}_poller_status.json"
+      if ENV['SKIP_UPDATING_STATE_FILE'] == 'true'
+        $logger.info "Skipping updating updating #{key} because SKIP_UPDATING_STATE_FILE is enabled"
+      else
+        @s3.put_object({
+          body: json_body,
+          bucket: ENV["BUCKET_NAME"],
+          key: key,
+          acl: "public-read"
+        })
+      end
     rescue Exception => e
-      $logger.error "Unable to store current state record in S3", { status: e.message }
-      raise S3Error, "Failed to store most recent state record in S3"
+      $logger.error "Unable to store current state record in S3", { :status => e.message }
+      raise S3Error.new("Failed to store most recent state record in S3")
     end
 
     # Set new state for use in processing subsequent batches within this invocation

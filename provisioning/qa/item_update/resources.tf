@@ -17,5 +17,5 @@ module "base" {
   environment = "qa"
   deployment_name = "Item"
   record_env = "item"
-
+  memory = 256
 }

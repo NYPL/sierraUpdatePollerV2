@@ -17,4 +17,5 @@ module "base" {
   environment = "production"
   deployment_name = "Item"
   record_env = "item"
+  memory = 256
 }

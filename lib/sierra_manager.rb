@@ -21,6 +21,8 @@ class SierraManager
       client_id: $kms_client.decrypt(ENV["SIERRA_OAUTH_ID"]),
       client_secret: $kms_client.decrypt(ENV["SIERRA_OAUTH_SECRET"])
     )
+    # This will hold the most recently retrieved Sierra response objects:
+    @previous_results = []
   end
 
   # Fetch records in batches from the Sierra API
@@ -28,12 +30,47 @@ class SierraManager
   def fetch_updated_records
     # This sets the end fetch time for the current invocation and will be the start_time for the next invocation
     @current_time = DateTime.now
-    $logger.info "Setting fetch (end) time to #{current_time}"
+    @job_start_time = @state.start_time
+    $logger.info "Beginning Sierra fetch: #{@job_start_time} - #{end_time}"
 
     # Fetch batches of records until no more remain to process
     while @processing
-      results = _fetch_record_batch
-      _parse_result_batch(results)
+      threads = []
+
+      # Thread 1: Encode previously fetched results:
+      threads << Thread.new { send_results_to_kinesis }
+      # Thread 2: Fetch next set of results:
+      threads << Thread.new do
+        # Fetch next set of records from Sierra:
+        batch = _fetch_record_batch()
+
+        # Update state file based on what was received:
+        _parse_result_batch(batch)
+
+        # Save response object to process during the next fetch:
+        @previous_results << batch
+      end
+
+      threads.each { |thr| thr.join }
+    end
+
+    # Finish by processing the last unsent batch of results:
+    send_results_to_kinesis
+  end
+
+  # If we have any previously retrieved Sierra response object waiting to be
+  # sent to Kinesis, send it:
+  def send_results_to_kinesis
+    # @previous_results will be empty on the first run (before the first set of
+    # results have been received):
+    unless @previous_results.empty?
+      sierra_batch = SierraBatch.new(@previous_results.shift)
+      sierra_batch.encode_and_send_to_kinesis if sierra_batch.has_results?
+
+      # Ensure we record the successes and errors for final validation:
+      _update_processing_counts sierra_batch.process_statuses
+
+      $logger.info "Collected and sent #{@records_processed[:success]} records so far for #{@job_start_time} - #{end_time}"
     end
   end
 
@@ -55,11 +92,17 @@ class SierraManager
 
   private
 
+  # Returns the relevant end_time for this job (either the manual end_time or
+  # the "current_time" recorded at the start)
+  def end_time
+    @state.is_a?(ManualJobStateManager) ? @state.end_time : current_time
+  end
+
   # Fetches an individual record batch from Sierra
   def _fetch_record_batch
     # Set up the GET request params
     param_array = [["fields", ENV["RECORD_FIELDS"]], ["offset", @state.start_offset],
-                   [ENV['UPDATE_TYPE'] == 'delete' ? 'deletedDate' : 'updatedDate', "[#{@state.start_time},#{current_time}]"],
+                   [ENV['UPDATE_TYPE'] == 'delete' ? 'deletedDate' : 'updatedDate', "[#{@state.start_time},#{end_time}]"],
                    ["limit", @@request_batch_size]]
 
     # Make query against Sierra API
@@ -82,13 +125,13 @@ class SierraManager
   def _query_sierra_api(param_array)
     # Encode request params
     param_str = URI.encode_www_form(param_array)
-    start_time = Time.now
+    _start_time = Time.now
     $logger.debug("Querying Sierra API with params #{param_str}")
 
     # Execute request and handle errors
     begin
       result = @sierra_client.get("/#{ENV['SIERRA_VERSION']}/#{ENV['RECORD_TYPE']}?#{param_str}")
-      $logger.info("Received Sierra response in #{Time.now - start_time} seconds")
+      $logger.info("Received Sierra response in #{Time.now - _start_time} seconds")
     rescue Exception => e
       $logger.error("Failed to query Sierra API", { status: e.message })
       raise SierraError, "Received error from Sierra API. Review logs"
@@ -101,12 +144,6 @@ class SierraManager
   def _process_batch(results)
     # Extract relevant fields
     sierra_batch = SierraBatch.new(results)
-
-    # Process records received
-    sierra_batch.encode_and_send_to_kinesis
-
-    # Update counts of total records processed
-    _update_processing_counts sierra_batch.process_statuses
 
     # If we received fewer records than the maximum per batch this is the last batch
     # and we should set the state to start from this point and exit this invocation
