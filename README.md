@@ -39,7 +39,11 @@ This function polls the Sierra API for updates to the Bib, Holding and Item tabl
 
 This function is developed using the AWS SAM framework, [which has installation instructions here](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
 
-To install the dependencies for this function, they must be bundled for this framework and should be done with `rake run_bundler`
+To install the dependencies for this function, they must be bundled for this framework and should be done with:
+```
+bundle install    # To ensure aws-sdk is installed, as that's required by rakefile
+rake run_bundler
+```
 
 ## Usage
 
