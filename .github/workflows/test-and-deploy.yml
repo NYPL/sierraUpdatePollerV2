@@ -31,6 +31,9 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
+      - name: Install dependencies
+        run: |
+          rake run_bundler
       - uses: hashicorp/setup-terraform@v2
       - name: Deploy bib-update to QA
         run: |
