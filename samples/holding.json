@@ -1,0 +1,991 @@
+{
+    "id": 1146731,
+    "bibIds": [
+      23601508
+    ],
+    "bibIdLinks": [
+      "https://nypl.iii.com/iii/sierra-api/v6/bibs/23601508"
+    ],
+    "itemIds": [],
+    "itemIdLinks": [],
+    "inheritLocation": false,
+    "allocationRule": null,
+    "accountingUnit": 1,
+    "labelCode": "a",
+    "serialCode1": "-",
+    "serialCode2": "-",
+    "serialCode3": "-",
+    "serialCode4": "-",
+    "claimOnDate": "2025-02-15T05:00:00Z",
+    "receivingLocationCode": "p",
+    "vendorCode": "none",
+    "updateCount": "-",
+    "pieceCount": 0,
+    "eCheckInCode": " ",
+    "mediaTypeCode": " ",
+    "updatedDate": "2026-03-02",
+    "createdDate": "2026-03-02",
+    "deletedDate": null,
+    "deleted": false,
+    "suppressed": false,
+    "fixedFields": {
+      "35": {
+        "label": "Label Type",
+        "value": "a",
+        "display": null
+      },
+      "36": {
+        "label": "Serial Code 1",
+        "value": "-",
+        "display": null
+      },
+      "37": {
+        "label": "Serial Code 2",
+        "value": "-",
+        "display": null
+      },
+      "38": {
+        "label": "Copies",
+        "value": "1",
+        "display": null
+      },
+      "39": {
+        "label": "Claim On",
+        "value": "2025-02-15",
+        "display": null
+      },
+      "40": {
+        "label": "Location",
+        "value": "none ",
+        "display": null
+      },
+      "41": {
+        "label": "Recv Location",
+        "value": "p  ",
+        "display": null
+      },
+      "42": {
+        "label": "Vendor",
+        "value": "none ",
+        "display": null
+      },
+      "80": {
+        "label": "Record Type",
+        "value": "c",
+        "display": null
+      },
+      "81": {
+        "label": "Record Number",
+        "value": "1146731",
+        "display": null
+      },
+      "83": {
+        "label": "Created Date",
+        "value": "2026-03-02T16:28:05Z",
+        "display": null
+      },
+      "84": {
+        "label": "Updated Date",
+        "value": "2026-03-02T16:28:06Z",
+        "display": null
+      },
+      "85": {
+        "label": "No. of Revisions",
+        "value": "1",
+        "display": null
+      },
+      "86": {
+        "label": "Agency",
+        "value": "1",
+        "display": "53rd Street"
+      },
+      "98": {
+        "label": "",
+        "value": "2026-03-02T16:28:00Z",
+        "display": null
+      },
+      "118": {
+        "label": "Serial Code 3",
+        "value": "-",
+        "display": null
+      },
+      "119": {
+        "label": "Serial Code 4",
+        "value": "-",
+        "display": null
+      },
+      "120": {
+        "label": "Update Count",
+        "value": "-",
+        "display": null
+      },
+      "121": {
+        "label": "Piece Count",
+        "value": "0",
+        "display": null
+      },
+      "137": {
+        "label": "E-Checkin",
+        "value": " ",
+        "display": null
+      },
+      "159": {
+        "label": "Media Type",
+        "value": " ",
+        "display": null
+      },
+      "266": {
+        "label": "Inherit Location",
+        "value": "false",
+        "display": null
+      }
+    },
+    "varFields": [
+      {
+        "ind1": null,
+        "ind2": null,
+        "content": "00000ny   22000003n 4500",
+        "marcTag": null,
+        "fieldTag": "_",
+        "subfields": null
+      },
+      {
+        "ind1": " ",
+        "ind2": " ",
+        "content": null,
+        "marcTag": "863",
+        "fieldTag": "h",
+        "subfields": [
+          {
+            "tag": "8",
+            "content": "1.1"
+          },
+          {
+            "tag": "a",
+            "content": "1"
+          },
+          {
+            "tag": "b",
+            "content": "2-3"
+          },
+          {
+            "tag": "i",
+            "content": "2025"
+          },
+          {
+            "tag": "j",
+            "content": "22-23"
+          }
+        ]
+      },
+      {
+        "ind1": " ",
+        "ind2": " ",
+        "content": null,
+        "marcTag": "853",
+        "fieldTag": "y",
+        "subfields": [
+          {
+            "tag": "8",
+            "content": "1"
+          },
+          {
+            "tag": "a",
+            "content": "v."
+          },
+          {
+            "tag": "b",
+            "content": "no."
+          },
+          {
+            "tag": "i",
+            "content": "(year)"
+          },
+          {
+            "tag": "j",
+            "content": "(month)"
+          }
+        ]
+      }
+    ],
+    "holdings": [
+      {
+        "index": false,
+        "negation": false,
+        "incomplete": false,
+        "holding_ranges": [],
+        "holding_string": "v. 1, no. 2 (2025-22) - no. 3 (2025-23)"
+      }
+    ],
+    "location": null,
+    "checkInCards": [
+      {
+        "url": null,
+        "note": null,
+        "box_id": 2627449,
+        "status": {
+          "code": "E",
+          "label": "Expected"
+        },
+        "end_date": null,
+        "box_count": 24,
+        "copy_count": null,
+        "holding_id": 1146731,
+        "staff_note": null,
+        "start_date": "Spring 2031",
+        "suppressed": null,
+        "claim_count": 0,
+        "enumeration": {
+          "levels": [
+            "6",
+            "4",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "enumeration": "Vol. 6 No. 4"
+        },
+        "trans_end_date": null,
+        "trans_start_date": "Oct. 1, 2030"
+      },
+      {
+        "url": null,
+        "note": null,
+        "box_id": 2627448,
+        "status": {
+          "code": "E",
+          "label": "Expected"
+        },
+        "end_date": null,
+        "box_count": 23,
+        "copy_count": null,
+        "holding_id": 1146731,
+        "staff_note": null,
+        "start_date": "Winter 2030",
+        "suppressed": null,
+        "claim_count": 0,
+        "enumeration": {
+          "levels": [
+            "6",
+            "3",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "enumeration": "Vol. 6 No. 3"
+        },
+        "trans_end_date": null,
+        "trans_start_date": "Jul. 1, 2030"
+      },
+      {
+        "url": null,
+        "note": null,
+        "box_id": 2627447,
+        "status": {
+          "code": "E",
+          "label": "Expected"
+        },
+        "end_date": null,
+        "box_count": 22,
+        "copy_count": null,
+        "holding_id": 1146731,
+        "staff_note": null,
+        "start_date": "Fall 2030",
+        "suppressed": null,
+        "claim_count": 0,
+        "enumeration": {
+          "levels": [
+            "6",
+            "2",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "enumeration": "Vol. 6 No. 2"
+        },
+        "trans_end_date": null,
+        "trans_start_date": "Apr. 1, 2030"
+      },
+      {
+        "url": null,
+        "note": null,
+        "box_id": 2627446,
+        "status": {
+          "code": "E",
+          "label": "Expected"
+        },
+        "end_date": null,
+        "box_count": 21,
+        "copy_count": null,
+        "holding_id": 1146731,
+        "staff_note": null,
+        "start_date": "Summer 2030",
+        "suppressed": null,
+        "claim_count": 0,
+        "enumeration": {
+          "levels": [
+            "6",
+            "1",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "enumeration": "Vol. 6 No. 1"
+        },
+        "trans_end_date": null,
+        "trans_start_date": "Jan. 1, 2030"
+      },
+      {
+        "url": null,
+        "note": null,
+        "box_id": 2627445,
+        "status": {
+          "code": "E",
+          "label": "Expected"
+        },
+        "end_date": null,
+        "box_count": 20,
+        "copy_count": null,
+        "holding_id": 1146731,
+        "staff_note": null,
+        "start_date": "Spring 2030",
+        "suppressed": null,
+        "claim_count": 0,
+        "enumeration": {
+          "levels": [
+            "5",
+            "4",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "enumeration": "Vol. 5 No. 4"
+        },
+        "trans_end_date": null,
+        "trans_start_date": "Oct. 1, 2029"
+      },
+      {
+        "url": null,
+        "note": null,
+        "box_id": 2627444,
+        "status": {
+          "code": "E",
+          "label": "Expected"
+        },
+        "end_date": null,
+        "box_count": 19,
+        "copy_count": null,
+        "holding_id": 1146731,
+        "staff_note": null,
+        "start_date": "Winter 2029",
+        "suppressed": null,
+        "claim_count": 0,
+        "enumeration": {
+          "levels": [
+            "5",
+            "3",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "enumeration": "Vol. 5 No. 3"
+        },
+        "trans_end_date": null,
+        "trans_start_date": "Jul. 1, 2029"
+      },
+      {
+        "url": null,
+        "note": null,
+        "box_id": 2627443,
+        "status": {
+          "code": "E",
+          "label": "Expected"
+        },
+        "end_date": null,
+        "box_count": 18,
+        "copy_count": null,
+        "holding_id": 1146731,
+        "staff_note": null,
+        "start_date": "Fall 2029",
+        "suppressed": null,
+        "claim_count": 0,
+        "enumeration": {
+          "levels": [
+            "5",
+            "2",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "enumeration": "Vol. 5 No. 2"
+        },
+        "trans_end_date": null,
+        "trans_start_date": "Apr. 1, 2029"
+      },
+      {
+        "url": null,
+        "note": null,
+        "box_id": 2627442,
+        "status": {
+          "code": "E",
+          "label": "Expected"
+        },
+        "end_date": null,
+        "box_count": 17,
+        "copy_count": null,
+        "holding_id": 1146731,
+        "staff_note": null,
+        "start_date": "Summer 2029",
+        "suppressed": null,
+        "claim_count": 0,
+        "enumeration": {
+          "levels": [
+            "5",
+            "1",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "enumeration": "Vol. 5 No. 1"
+        },
+        "trans_end_date": null,
+        "trans_start_date": "Jan. 1, 2029"
+      },
+      {
+        "url": null,
+        "note": null,
+        "box_id": 2627441,
+        "status": {
+          "code": "E",
+          "label": "Expected"
+        },
+        "end_date": null,
+        "box_count": 16,
+        "copy_count": null,
+        "holding_id": 1146731,
+        "staff_note": null,
+        "start_date": "Spring 2029",
+        "suppressed": null,
+        "claim_count": 0,
+        "enumeration": {
+          "levels": [
+            "4",
+            "4",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "enumeration": "Vol. 4 No. 4"
+        },
+        "trans_end_date": null,
+        "trans_start_date": "Oct. 1, 2028"
+      },
+      {
+        "url": null,
+        "note": null,
+        "box_id": 2627440,
+        "status": {
+          "code": "E",
+          "label": "Expected"
+        },
+        "end_date": null,
+        "box_count": 15,
+        "copy_count": null,
+        "holding_id": 1146731,
+        "staff_note": null,
+        "start_date": "Winter 2028",
+        "suppressed": null,
+        "claim_count": 0,
+        "enumeration": {
+          "levels": [
+            "4",
+            "3",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "enumeration": "Vol. 4 No. 3"
+        },
+        "trans_end_date": null,
+        "trans_start_date": "Jul. 1, 2028"
+      },
+      {
+        "url": null,
+        "note": null,
+        "box_id": 2627439,
+        "status": {
+          "code": "E",
+          "label": "Expected"
+        },
+        "end_date": null,
+        "box_count": 14,
+        "copy_count": null,
+        "holding_id": 1146731,
+        "staff_note": null,
+        "start_date": "Fall 2028",
+        "suppressed": null,
+        "claim_count": 0,
+        "enumeration": {
+          "levels": [
+            "4",
+            "2",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "enumeration": "Vol. 4 No. 2"
+        },
+        "trans_end_date": null,
+        "trans_start_date": "Apr. 1, 2028"
+      },
+      {
+        "url": null,
+        "note": null,
+        "box_id": 2627438,
+        "status": {
+          "code": "E",
+          "label": "Expected"
+        },
+        "end_date": null,
+        "box_count": 13,
+        "copy_count": null,
+        "holding_id": 1146731,
+        "staff_note": null,
+        "start_date": "Summer 2028",
+        "suppressed": null,
+        "claim_count": 0,
+        "enumeration": {
+          "levels": [
+            "4",
+            "1",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "enumeration": "Vol. 4 No. 1"
+        },
+        "trans_end_date": null,
+        "trans_start_date": "Jan. 1, 2028"
+      },
+      {
+        "url": null,
+        "note": null,
+        "box_id": 2627437,
+        "status": {
+          "code": "E",
+          "label": "Expected"
+        },
+        "end_date": null,
+        "box_count": 12,
+        "copy_count": null,
+        "holding_id": 1146731,
+        "staff_note": null,
+        "start_date": "Spring 2028",
+        "suppressed": null,
+        "claim_count": 0,
+        "enumeration": {
+          "levels": [
+            "3",
+            "4",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "enumeration": "Vol. 3 No. 4"
+        },
+        "trans_end_date": null,
+        "trans_start_date": "Oct. 1, 2027"
+      },
+      {
+        "url": null,
+        "note": null,
+        "box_id": 2627436,
+        "status": {
+          "code": "E",
+          "label": "Expected"
+        },
+        "end_date": null,
+        "box_count": 11,
+        "copy_count": null,
+        "holding_id": 1146731,
+        "staff_note": null,
+        "start_date": "Winter 2027",
+        "suppressed": null,
+        "claim_count": 0,
+        "enumeration": {
+          "levels": [
+            "3",
+            "3",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "enumeration": "Vol. 3 No. 3"
+        },
+        "trans_end_date": null,
+        "trans_start_date": "Jul. 1, 2027"
+      },
+      {
+        "url": null,
+        "note": null,
+        "box_id": 2627435,
+        "status": {
+          "code": "E",
+          "label": "Expected"
+        },
+        "end_date": null,
+        "box_count": 10,
+        "copy_count": null,
+        "holding_id": 1146731,
+        "staff_note": null,
+        "start_date": "Fall 2027",
+        "suppressed": null,
+        "claim_count": 0,
+        "enumeration": {
+          "levels": [
+            "3",
+            "2",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "enumeration": "Vol. 3 No. 2"
+        },
+        "trans_end_date": null,
+        "trans_start_date": "Apr. 1, 2027"
+      },
+      {
+        "url": null,
+        "note": null,
+        "box_id": 2627434,
+        "status": {
+          "code": "E",
+          "label": "Expected"
+        },
+        "end_date": null,
+        "box_count": 9,
+        "copy_count": null,
+        "holding_id": 1146731,
+        "staff_note": null,
+        "start_date": "Summer 2027",
+        "suppressed": null,
+        "claim_count": 0,
+        "enumeration": {
+          "levels": [
+            "3",
+            "1",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "enumeration": "Vol. 3 No. 1"
+        },
+        "trans_end_date": null,
+        "trans_start_date": "Jan. 1, 2027"
+      },
+      {
+        "url": null,
+        "note": null,
+        "box_id": 2627433,
+        "status": {
+          "code": "E",
+          "label": "Expected"
+        },
+        "end_date": null,
+        "box_count": 8,
+        "copy_count": null,
+        "holding_id": 1146731,
+        "staff_note": null,
+        "start_date": "Spring 2027",
+        "suppressed": null,
+        "claim_count": 0,
+        "enumeration": {
+          "levels": [
+            "2",
+            "4",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "enumeration": "Vol. 2 No. 4"
+        },
+        "trans_end_date": null,
+        "trans_start_date": "Oct. 1, 2026"
+      },
+      {
+        "url": null,
+        "note": null,
+        "box_id": 2627432,
+        "status": {
+          "code": "E",
+          "label": "Expected"
+        },
+        "end_date": null,
+        "box_count": 7,
+        "copy_count": null,
+        "holding_id": 1146731,
+        "staff_note": null,
+        "start_date": "Winter 2026",
+        "suppressed": null,
+        "claim_count": 0,
+        "enumeration": {
+          "levels": [
+            "2",
+            "3",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "enumeration": "Vol. 2 No. 3"
+        },
+        "trans_end_date": null,
+        "trans_start_date": "Jul. 1, 2026"
+      },
+      {
+        "url": null,
+        "note": null,
+        "box_id": 2627431,
+        "status": {
+          "code": "E",
+          "label": "Expected"
+        },
+        "end_date": null,
+        "box_count": 6,
+        "copy_count": null,
+        "holding_id": 1146731,
+        "staff_note": null,
+        "start_date": "Fall 2026",
+        "suppressed": null,
+        "claim_count": 0,
+        "enumeration": {
+          "levels": [
+            "2",
+            "2",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "enumeration": "Vol. 2 No. 2"
+        },
+        "trans_end_date": null,
+        "trans_start_date": "Apr. 1, 2026"
+      },
+      {
+        "url": null,
+        "note": null,
+        "box_id": 2627430,
+        "status": {
+          "code": "E",
+          "label": "Expected"
+        },
+        "end_date": null,
+        "box_count": 5,
+        "copy_count": null,
+        "holding_id": 1146731,
+        "staff_note": null,
+        "start_date": "Summer 2026",
+        "suppressed": null,
+        "claim_count": 0,
+        "enumeration": {
+          "levels": [
+            "2",
+            "1",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "enumeration": "Vol. 2 No. 1"
+        },
+        "trans_end_date": null,
+        "trans_start_date": "Jan. 1, 2026"
+      },
+      {
+        "url": null,
+        "note": null,
+        "box_id": 2627429,
+        "status": {
+          "code": "E",
+          "label": "Expected"
+        },
+        "end_date": null,
+        "box_count": 4,
+        "copy_count": null,
+        "holding_id": 1146731,
+        "staff_note": null,
+        "start_date": "Spring 2026",
+        "suppressed": null,
+        "claim_count": 0,
+        "enumeration": {
+          "levels": [
+            "1",
+            "4",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "enumeration": "Vol. 1 No. 4"
+        },
+        "trans_end_date": null,
+        "trans_start_date": "Oct. 1, 2025"
+      },
+      {
+        "url": null,
+        "note": null,
+        "box_id": 2627428,
+        "status": {
+          "code": "A",
+          "label": "Arrived"
+        },
+        "end_date": null,
+        "box_count": 3,
+        "copy_count": null,
+        "holding_id": 1146731,
+        "staff_note": null,
+        "start_date": "Fall 2025",
+        "suppressed": "f",
+        "claim_count": 0,
+        "enumeration": {
+          "levels": [
+            "1",
+            "3",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "enumeration": "Vol. 1 No. 3"
+        },
+        "trans_end_date": null,
+        "trans_start_date": "Mar. 2, 2026"
+      },
+      {
+        "url": null,
+        "note": null,
+        "box_id": 2627427,
+        "status": {
+          "code": "A",
+          "label": "Arrived"
+        },
+        "end_date": null,
+        "box_count": 2,
+        "copy_count": null,
+        "holding_id": 1146731,
+        "staff_note": null,
+        "start_date": "Summer 2025",
+        "suppressed": "f",
+        "claim_count": 0,
+        "enumeration": {
+          "levels": [
+            "1",
+            "2",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "enumeration": "Vol. 1 No. 2"
+        },
+        "trans_end_date": null,
+        "trans_start_date": "Mar. 2, 2026"
+      },
+      {
+        "url": null,
+        "note": null,
+        "box_id": 2627426,
+        "status": {
+          "code": "E",
+          "label": "Expected"
+        },
+        "end_date": null,
+        "box_count": 1,
+        "copy_count": null,
+        "holding_id": 1146731,
+        "staff_note": null,
+        "start_date": "Summer 2025",
+        "suppressed": null,
+        "claim_count": 0,
+        "enumeration": {
+          "levels": [
+            "1",
+            "1",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "enumeration": "Vol. 1 No. 1"
+        },
+        "trans_end_date": null,
+        "trans_start_date": "Jan. 1, 2025"
+      }
+    ]
+  }

@@ -1,0 +1,38 @@
+{
+   "bibIdLinks" : [],
+   "bibIds" : [],
+   "deleted" : true,
+   "deletedDate" : "2025-04-15",
+   "fixedFields" : {
+      "80" : {
+         "label" : "Record Type",
+         "value" : "c"
+      },
+      "81" : {
+         "label" : "Record Number",
+         "value" : "1055871"
+      },
+      "84" : {
+         "label" : "Updated Date",
+         "value" : "2025-04-15T04:00:00Z"
+      },
+      "85" : {
+         "label" : "No. of Revisions",
+         "value" : "3"
+      },
+      "86" : {
+         "display" : "53rd Street",
+         "label" : "Agency",
+         "value" : "1"
+      },
+      "98" : {
+         "label" : "",
+         "value" : "2013-11-08T13:10:31Z"
+      }
+   },
+   "id" : 1055871,
+   "itemIdLinks" : [],
+   "itemIds" : [],
+   "updatedDate" : "2021-09-05T17:15:55Z",
+   "varFields" : []
+}

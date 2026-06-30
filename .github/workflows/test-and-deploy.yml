@@ -1,0 +1,103 @@
+name: Test and deploy
+on: push
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: ruby/setup-ruby@v1
+      with:
+        bundler-cache: true
+    - name: Install dependencies
+      run: |
+        rake run_bundler
+    - name: Run linter and test suite
+      run: |
+        rake test
+  deploy-qa:
+    permissions:
+      id-token: write
+      contents: read
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/qa'
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: arn:aws:iam::946183545209:role/GithubActionsDeployerRole
+          aws-region: us-east-1
+      - uses: actions/checkout@v3
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: Install dependencies
+        run: |
+          rake run_bundler
+      - uses: hashicorp/setup-terraform@v2
+      - name: Deploy bib-update to QA
+        run: |
+          terraform -chdir=provisioning/qa/bib_update init -input=false
+          terraform -chdir=provisioning/qa/bib_update apply -auto-approve -input=false
+      - name: Deploy bib-delete to QA
+        run: |
+          terraform -chdir=provisioning/qa/bib_delete init -input=false
+          terraform -chdir=provisioning/qa/bib_delete apply -auto-approve -input=false
+      - name: Deploy item-update to QA
+        run: |
+          terraform -chdir=provisioning/qa/item_update init -input=false
+          terraform -chdir=provisioning/qa/item_update apply -auto-approve -input=false
+      - name: Deploy item-delete to QA
+        run: |
+          terraform -chdir=provisioning/qa/item_delete init -input=false
+          terraform -chdir=provisioning/qa/item_delete apply -auto-approve -input=false
+      - name: Deploy holding-update to QA
+        run: |
+          terraform -chdir=provisioning/qa/holding_update init -input=false
+          terraform -chdir=provisioning/qa/holding_update apply -auto-approve -input=false
+      - name: Deploy holding-delete to QA
+        run: |
+          terraform -chdir=provisioning/qa/holding_delete init -input=false
+          terraform -chdir=provisioning/qa/holding_delete apply -auto-approve -input=false
+  deploy-prod:
+    permissions:
+      id-token: write
+      contents: read
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/production'
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1-node16
+        with:
+          role-to-assume: arn:aws:iam::946183545209:role/GithubActionsDeployerRole
+          aws-region: us-east-1
+      - uses: actions/checkout@v3
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - uses: hashicorp/setup-terraform@v2
+      - name: Deploy bib-update to Production
+        run: |
+          terraform -chdir=provisioning/production/bib_update init -input=false
+          terraform -chdir=provisioning/production/bib_update apply -auto-approve -input=false
+      - name: Deploy bib-delete to Production
+        run: |
+          terraform -chdir=provisioning/production/bib_delete init -input=false
+          terraform -chdir=provisioning/production/bib_delete apply -auto-approve -input=false
+      - name: Deploy item-update to Production
+        run: |
+          terraform -chdir=provisioning/production/item_update init -input=false
+          terraform -chdir=provisioning/production/item_update apply -auto-approve -input=false
+      - name: Deploy item-delete to Production
+        run: |
+          terraform -chdir=provisioning/production/item_delete init -input=false
+          terraform -chdir=provisioning/production/item_delete apply -auto-approve -input=false
+      - name: Deploy holding-update to Production
+        run: |
+          terraform -chdir=provisioning/production/holding_update init -input=false
+          terraform -chdir=provisioning/production/holding_update apply -auto-approve -input=false
+      - name: Deploy holding-delete to Produciton
+        run: |
+          terraform -chdir=provisioning/production/holding_delete init -input=false
+          terraform -chdir=provisioning/production/holding_delete apply -auto-approve -input=false

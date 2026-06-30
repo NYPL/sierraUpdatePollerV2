@@ -58,7 +58,7 @@ resource "aws_lambda_function" "poller_lambda" {
   handler                        = "app.handle_event"
   memory_size                    = var.memory
   role                           = "arn:aws:iam::946183545209:role/lambda-full-access"
-  runtime                        = "ruby2.7"
+  runtime                        = "ruby3.4"
   reserved_concurrent_executions = 1
   timeout                        = 900
 
