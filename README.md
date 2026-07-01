@@ -4,19 +4,16 @@
 
 [![GitHub version](https://badge.fury.io/gh/nypl%2FsierraUpdatePollerV2.svg)](https://badge.fury.io/gh/nypl%2FsierraUpdatePollerV2)
 
-This function polls the Sierra API for updates to the Bib, Holding and Item tables and passes them to a Kinesis stream for further processing. This function is largely a refactoring of the existing [SierraUpdatePoller](https://github.com/NYPL-discovery/sierraupdatepoller) but is somewhat simplified using the knowledge gained there.
+This function polls the Sierra API for updates to the Bib, Holding, and Item tables and passes them to a Kinesis stream for further processing. This function is largely a refactoring of the existing [SierraUpdatePoller](https://github.com/NYPL-discovery/sierraupdatepoller) but is somewhat simplified using the knowledge gained there.
 
-## Requirements
+Note that the kinesis stream (and schema) used to broadcast fetched records differs depending on the record type:
 
-- ruby 2.7
-- AWS CLI
+ - **Updated/deleted bibs** are posted to the BibPostRequest Kinesis stream, encoded using the namesake schema ([see diagram](https://docs.google.com/presentation/d/1kPUhT-JPOuniXndKWc_JEp2EY5rOPuH5ebSqYCe_438/edit?slide=id.g3753bed0956_0_2#slide=id.g3753bed0956_0_2))
+ - **Updated/deleted items** are posted to the ItemPostRequest Kinesis stream, encoded using the namesake schema ([see diagram](https://docs.google.com/presentation/d/1kPUhT-JPOuniXndKWc_JEp2EY5rOPuH5ebSqYCe_438/edit?slide=id.g3753bed0956_0_2#slide=id.g3753bed0956_0_2))
+ - **Updated holdings** are posted to the SierraHoldingParser Kinesis stream, encoded using the SierraHolding schema so that we can attach checkin cards ([see diagram](https://docs.google.com/presentation/d/1Zo04SACodW9Q0mI4RBbpwoD-oFIrqCsjOAUtPaB0Grw/edit?slide=id.g96875acc9d_0_45#slide=id.g96875acc9d_0_45))
+ - **Deleted holdings** are posted directly to the HoldPostRequest Kinesis stream (because we don't need to attach checkin cards to deleted holdings), encoded using the Holding schema ([see diagram](https://docs.google.com/presentation/d/1Zo04SACodW9Q0mI4RBbpwoD-oFIrqCsjOAUtPaB0Grw/edit?slide=id.g96875acc9d_0_45#slide=id.g96875acc9d_0_45))
 
-## Dependencies
-
-- nypl_ruby_util@0.1.0
-- aws-sdk-s3@1.74.0
-- rspec@3.9.0
-- mocha@1.11.2
+Reconciling the multiple variaions of Holding schema and their inconsistent relationship to stream name is an acknowledged future improvement. It seems likely the `Holding` schema is flexible enough to be used everywhere we're currently using `HoldPostRequest` or `SierraHolding`, although our standard recommends revising the pipeline to ensure schema names match Kinesis stream names, even if that means some schemas are identical. We should move this in one or the other direction.
 
 ## Environment Variables
 
