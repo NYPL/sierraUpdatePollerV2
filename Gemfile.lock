@@ -4,7 +4,7 @@ GEM
     avro (1.10.0)
       multi_json (~> 1)
     aws-eventstream (1.4.0)
-    aws-partitions (1.1262.0)
+    aws-partitions (1.1265.0)
     aws-sdk-cloudwatchevents (1.107.0)
       aws-sdk-core (~> 3, >= 3.248.0)
       aws-sigv4 (~> 1.5)
@@ -22,7 +22,7 @@ GEM
     aws-sdk-kms (1.36.0)
       aws-sdk-core (~> 3, >= 3.99.0)
       aws-sigv4 (~> 1.1)
-    aws-sdk-lambda (1.185.0)
+    aws-sdk-lambda (1.186.0)
       aws-sdk-core (~> 3, >= 3.248.0)
       aws-sigv4 (~> 1.5)
     aws-sdk-s3 (1.226.0)
@@ -93,7 +93,7 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
-  aws-sdk-s3
+  aws-sdk-s3 (>= 1.226)
   dotenv
   mocha
   nokogiri (>= 1.19.4)
@@ -103,12 +103,12 @@ DEPENDENCIES
 CHECKSUMS
   avro (1.10.0) sha256=20991330e14b9317ec4fa64abae652d2138acb810d6ed90af61d89e00292184e
   aws-eventstream (1.4.0) sha256=116bf85c436200d1060811e6f5d2d40c88f65448f2125bc77ffce5121e6e183b
-  aws-partitions (1.1262.0) sha256=77e9b1dd3e8f616673f2959d2fc4e762065f83a43140e2cb82274525afbaccf7
+  aws-partitions (1.1265.0) sha256=591a4e4ba0bfde0a37fcfed1b0f57c8915c44d0564c4c332606bc9926d6f65d1
   aws-sdk-cloudwatchevents (1.107.0) sha256=64580ad96a0cdef007cbef5ac1f25e3ad5f4dc9dbb9b429737572981f0781e9d
   aws-sdk-core (3.252.0) sha256=09c042cbfc2acf2239441cc9b982ebab2a999bed2ef6bdc51849e7b3d6e48a1c
   aws-sdk-kinesis (1.26.0) sha256=13ff3940703a01b220bc1e0c7afa12094969fbf4ce675d65924aa327c065f3dd
   aws-sdk-kms (1.36.0) sha256=d880c58637b5826fbe095b231723f81e2bd51cffcfe2f8566e3c61e288bcfc66
-  aws-sdk-lambda (1.185.0) sha256=ba0e6f083776ff7c3538999bff85e18458c1c182d82538453b84277efc27c50e
+  aws-sdk-lambda (1.186.0) sha256=5afaeeb4de376700cf7391bc59fad7514b8a0ac119fbd0157c5ee325d7a26a86
   aws-sdk-s3 (1.226.0) sha256=e599f431e006ec9b92c61ee0f14d3f658a1f6c8a1d623d2160be927ac958e2bf
   aws-sigv4 (1.12.1) sha256=6973ff95cb0fd0dc58ba26e90e9510a2219525d07620c8babeb70ef831826c00
   base64 (0.3.0) sha256=27337aeabad6ffae05c265c450490628ef3ebd4b67be58257393227588f5a97b
