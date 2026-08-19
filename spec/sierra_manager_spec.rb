@@ -26,7 +26,8 @@ describe SierraManager do
 
     describe '#fetch_updated_records' do
         it 'should process batches until process is set to false' do
-            DateTime.stubs(:now).returns('current_time')
+            mock_now = DateTime.parse('2023-01-01T12:00:20Z')
+            DateTime.stubs(:now).returns(mock_now)
 
             # Skip kinesis processing for this test:
             @test_manager.stubs(:send_results_to_kinesis)
@@ -42,11 +43,12 @@ describe SierraManager do
 
             @test_manager.fetch_updated_records
             expect(@test_manager.processing).to eq(false)
-            expect(@test_manager.current_time).to eq('current_time')
+            expect(@test_manager.current_time).to eq('2023-01-01T12:00:00+00:00')
         end
 
         it 'should send previously fetched batch to kinesis on each run' do
-            DateTime.stubs(:now).returns('current_time')
+            mock_now = DateTime.parse('2023-01-01T12:00:20Z')
+            DateTime.stubs(:now).returns(mock_now)
 
             # Expect SierraBatch.encode_and_send_to_kinesis called twice
             mock_batch = mock()
@@ -72,7 +74,8 @@ describe SierraManager do
         end
 
         it 'should send previously fetched batch to kinesis even if kinesis is slow' do
-            DateTime.stubs(:now).returns('current_time')
+            mock_now = DateTime.parse('2023-01-01T12:00:20Z')
+            DateTime.stubs(:now).returns(mock_now)
 
             # Expect SierraBatch.encode_and_send_to_kinesis called twice
             mock_batch = mock()
@@ -100,6 +103,18 @@ describe SierraManager do
             expect(@test_manager.processing).to eq(false)
 
             expect(@test_manager.records_processed).to eq({ success: 2, error: 0 })
+        end
+
+        it 'should set current_time to 20 seconds before the actual current time' do
+            mock_now = DateTime.parse('2023-01-01T12:00:20Z')
+            DateTime.stubs(:now).returns(mock_now)
+
+            @test_manager.stubs(:send_results_to_kinesis)
+            @test_manager.stubs(:_fetch_record_batch)
+            @test_manager.stubs(:_parse_result_batch).with() { @test_manager.processing = false; true }
+
+            @test_manager.fetch_updated_records
+            expect(@test_manager.current_time).to eq('2023-01-01T12:00:00+00:00')
         end
     end
 

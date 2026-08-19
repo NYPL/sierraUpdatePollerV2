@@ -29,7 +29,9 @@ class SierraManager
   # This will process batches in a loop until @processing is false
   def fetch_updated_records
     # This sets the end fetch time for the current invocation and will be the start_time for the next invocation
-    @current_time = DateTime.now
+    # We subtract 20 seconds from the current time to allow for any delays in the Sierra system.
+    # DateTime arithmetic is in days, so we divide 20 seconds by the number of seconds in a day (24 * 60 * 60).
+    @current_time = DateTime.now - (20.0 / (24 * 60 * 60))
     @job_start_time = @state.start_time
     $logger.info "Beginning Sierra fetch: #{@job_start_time} - #{end_time}"
 
